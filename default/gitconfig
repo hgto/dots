@@ -3,11 +3,6 @@
   clean             = git-media-clean %f
   smudge            = git-media-smudge %f
 
-[user]
-  name              = hgto
-  email             = 77352283+hgto@users.noreply.github.com
-  signingkey        =
-
 [alias]
   a                 = add
   af                = add --force
@@ -165,10 +160,10 @@
 [hub]
   triangular        = false
 [include]
+  path = ~/.config/git/hgto.gitconfig
   path = ~/.config/git/ssh.gitconfig
   path = ~/.config/git/windows.gitconfig
   path = ~/.config/git/local.gitconfig
-[github]
-  user = hgto
+
 [submodule]
   recurse = true
