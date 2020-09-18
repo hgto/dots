@@ -1,7 +1,7 @@
 # vi: ft=make et
 
 $ default
-@include: shell vim mux git net bin ssh
+@include: shell vim mux git net bin ssh hgto
 
 $ bin
 ~/bin/: ./default/bin/*
@@ -55,7 +55,6 @@ $ windows
 @include: vimfiles git net powershell_windows ssh_windows
 ~/AppData/Local/nvim/init.vim: ./default/vimdir/vimrc
 ~/AppData/Roaming/alacritty/alacritty.yml: ./alacritty.yml
-~/AppData/Local/nvim/init.vim: ./default/vimdir/vimrc
 
 $ powershell_windows
 ~/My Documents/WindowsPowerShell/profile.ps1: ./windows/profile.ps1
@@ -73,8 +72,6 @@ $ macos
 ~/.config/bash/os-aliases.bash: ./macos/aliases.bash
 ~/.config/alacritty/alacritty.yml: ./alacritty.yml
 ~/.bash_sessions_disable: /dev/null
-
-#--------------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------------
 
