@@ -2,7 +2,7 @@
 
 Here be dragons. These are my dots.
 
-These dots are deployed with [symfest](https://github.com/hgto/symfest), my bespoke
+These dots are deployed with [toda](https://github.com/hgto/toda), my bespoke
 symlink manager that uses a bespoke file spec. Yes, I rolled my own.
 
 ## Design Choices
