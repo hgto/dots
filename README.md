@@ -5,6 +5,11 @@ Here be dragons. These are my dots.
 These dots are deployed with [toda](https://github.com/hgto/toda), my bespoke
 symlink manager that uses a bespoke file spec. Yes, I rolled my own.
 
+
+## Quickstart, be lazy
+https://raw.githubusercontent.com/hgto/lazybox/refs/heads/main/dots.sh
+
+
 ## Design Choices
 Multi-platform support for POSIX-compliant systems, Debian GNU/Linux, Windows,
 macOS and BSDs in that order of priority.
