@@ -68,7 +68,7 @@ VISUAL="$EDITOR"
 [ -n "$XDG_DATA_HOME"   ] || export XDG_DATA_HOME="$HOME/.local/share"
 
 #{{{1 fzf
-export FZF_COMPLETION_TRIGGER='*'
+export FZF_COMPLETION_TRIGGER='**'
 fzfdir=~/.vim/plugged/fzf
 [ -d $fzfdir ] && {
   ADJUNCT_PATH "$fzfdir/bin"

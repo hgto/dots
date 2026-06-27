@@ -56,7 +56,7 @@ completion spec, then re-wrapped by fzf so the fuzzy path trigger still works.
 | `CTRL-R` | fuzzy-search command history (full-command preview) |
 | `ALT-C` | `cd` into a selected subdirectory (tree preview) |
 | `ctrl-/` | toggle the preview pane |
-| `<cmd> *<tab>` | fuzzy completion; trigger is `*` (e.g. `vim src/*<tab>`) |
+| `<cmd> **<tab>` | fuzzy completion; trigger is `**` (e.g. `vim src/**<tab>`) |
 
 ### enabled fzf features
 
