@@ -32,8 +32,7 @@ alias \
   safevi='SAFEVI=1 $VISUAL' \
   svi='SAFEVI=1 $VISUAL' \
   startx='2>&1 >~/.local/startx.log startx' \
-  makepackagegreatagain='python3 setup.py sdist bdist_wheel && twine upload dist/*' \
-  hgtogitconfig='cat ~/.config/git/hgto.gitconfig >> .git/config'
+  makepackagegreatagain='python3 setup.py sdist bdist_wheel && twine upload dist/*'
 
 if ls --group-directories-first 2>/dev/null >&2; then
   alias ls='ls --color=auto -hF --group-directories-first'

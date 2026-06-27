@@ -40,6 +40,7 @@ $ mux
 $ git
 ~/.gitignore: ./default/gitignore
 ~/.gitconfig: ./default/gitconfig
+~/bin/gitid: ./vendor/gitid/gitid
 
 $ ssh
 ~/bin/: ./ssh/bin/*

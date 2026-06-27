@@ -1,0 +1,3 @@
+[submodule "vendor/gitid"]
+	path = vendor/gitid
+	url = https://github.com/hgto/gitid
