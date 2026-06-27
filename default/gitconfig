@@ -173,3 +173,6 @@
   recurse = true
 [pull]
   rebase = true
+
+[includeIf "hasconfig:remote.*.url:*github.com[:/]hgto/**"]
+  path = ~/.config/git/hgto.gitconfig
