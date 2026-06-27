@@ -10,6 +10,7 @@ alias \
   o='exec onemux' \
   tmxlb='tmux loadb -' \
   cdtl='cd "$(git rev-parse --show-toplevel)"' \
+  cc='claude' \
   rmi='/bin/rm -i' \
   tree='tree -C' \
   grep='grep --color=auto' \
