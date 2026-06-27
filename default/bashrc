@@ -159,6 +159,12 @@ SOURCE_FIRST 2>/dev/null \
   /usr/share/doc/git/contrib/completion/git-completion.bash \
   /etc/bash_completion.d/git
 
+# Re-wrap git with fzf so `git <trigger><tab>` (trigger = $FZF_COMPLETION_TRIGGER)
+# still fuzzy-finds paths, while a plain `git <tab>` falls back to git's own
+# completion loaded just above. Must run after both fzf and git-completion.
+# Runs only if fzf's completion.bash defined the helper.
+declare -F _fzf_setup_completion >/dev/null 2>&1 && _fzf_setup_completion path git
+
 #{{{1 includes for bash
 #-------------------------------------------------------------------------------
 . ~/.config/bash/git.bash
