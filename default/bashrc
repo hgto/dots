@@ -29,8 +29,26 @@ SOURCE_FIRST () {
 
 #{{{1 all i want is someone who completes me
 #-------------------------------------------------------------------------------
-SOURCE_TRY /etc/bash_completion
-SOURCE_TRY /usr/local/etc/profile.d/bash_completion.sh
+# Load bash-completion from wherever the platform put it. macOS Homebrew first
+# (Apple Silicon, then Intel), then Linux (modern path, then legacy). The @2
+# loader needs bash >= 4.2 and silently no-ops under bash 3.2.
+SOURCE_FIRST 2>/dev/null \
+  /opt/homebrew/etc/profile.d/bash_completion.sh \
+  /usr/local/etc/profile.d/bash_completion.sh \
+  /usr/share/bash-completion/bash_completion \
+  /etc/profile.d/bash_completion.sh \
+  /etc/bash_completion
+
+# If completion still isn't loaded, offer to provision it (once). bash-completion@2
+# sets BASH_COMPLETION_VERSINFO on success; v1/Linux defines _init_completion.
+# The snooze marker keeps this from nagging on every new shell --- to re-arm:
+#   rm -f "${XDG_CACHE_HOME:-$HOME/.cache}/bash-completion.snooze"
+if [[ -z "${BASH_COMPLETION_VERSINFO:-}" ]] \
+  && ! declare -F _init_completion _comp_initialize >/dev/null 2>&1 \
+  && [[ ! -e "${XDG_CACHE_HOME:-$HOME/.cache}/bash-completion.snooze" ]] \
+  && command -v setup-bash-completion >/dev/null 2>&1; then
+    setup-bash-completion --auto
+fi
 
 #{{{1 functions
 #-------------------------------------------------------------------------------

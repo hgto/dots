@@ -1,0 +1,186 @@
+#!/bin/sh
+# vi: ft=sh sts=2 sw=2 et
+#
+# setup-bash-completion --- ensure bash programmable completion is installed.
+#
+# Targets POSIX /bin/sh so it runs even under macOS system bash 3.2.
+#
+#   macOS: installs the Homebrew `bash` and `bash-completion@2` formulae (both
+#          extremely high-visibility) and, with explicit confirmation, switches
+#          the login shell to Homebrew bash so completion actually loads.
+#   Linux: never installs anything without prompting --- it detects the package
+#          manager, prints the exact command, and asks before running it.
+#
+# Auto-invoked from ~/.bashrc on interactive start when completion is missing
+# (see the "all i want is someone who completes me" block). Idempotent and
+# safely re-runnable by hand: `setup-bash-completion`.
+#
+# Flags:
+#   --auto   invoked from ~/.bashrc; drops a snooze marker on exit so we do not
+#            re-prompt in every new interactive shell. Manual runs never snooze.
+
+set -u
+
+PROG="$0"
+AUTO=0
+[ "${1:-}" = "--auto" ] && AUTO=1
+
+SNOOZE="${XDG_CACHE_HOME:-$HOME/.cache}/bash-completion.snooze"
+
+say()  { printf '%s\n' "$*"; }
+warn() { printf '%s\n' "$*" >&2; }
+
+# In --auto mode every exit drops a snooze marker so the ~/.bashrc hook does not
+# nag on every new shell. To re-arm: rm -f "$SNOOZE".
+finish() {
+  if [ "$AUTO" -eq 1 ]; then
+    mkdir -p "$(dirname "$SNOOZE")" 2>/dev/null || true
+    : > "$SNOOZE" 2>/dev/null || true
+  fi
+  exit "${1:-0}"
+}
+
+# Default-No confirmation, read from the controlling terminal so it works even
+# when invoked from ~/.bashrc at shell startup.
+confirm() {
+  printf '%s [y/N] ' "$1"
+  IFS= read -r _ans 2>/dev/null < /dev/tty || return 1
+  case "$_ans" in [Yy] | [Yy][Ee][Ss]) return 0 ;; *) return 1 ;; esac
+}
+
+setup_macos() {
+  if ! command -v brew >/dev/null 2>&1; then
+    warn "setup-bash-completion: Homebrew not found."
+    warn "  Install it from https://brew.sh then re-run: $PROG"
+    finish 1
+  fi
+
+  brew_prefix="$(brew --prefix)"
+  brew_bash="$brew_prefix/bin/bash"
+
+  # Install missing formulae. Both are top-tier, high-visibility Homebrew
+  # packages, so on macOS we install them without prompting (the chsh below is
+  # the only step that touches system config, and it always asks first).
+  for formula in bash bash-completion@2; do
+    if brew list --versions "$formula" >/dev/null 2>&1; then
+      say "setup-bash-completion: $formula already installed."
+    else
+      say "setup-bash-completion: installing $formula via Homebrew ..."
+      if ! brew install "$formula"; then
+        warn "setup-bash-completion: 'brew install $formula' failed."
+        finish 1
+      fi
+    fi
+  done
+
+  if [ ! -x "$brew_bash" ]; then
+    warn "setup-bash-completion: expected Homebrew bash at $brew_bash but it is missing."
+    finish 1
+  fi
+
+  # Determine the configured login shell (not the running $SHELL, which is stale
+  # right after a chsh).
+  login_shell="$(dscl . -read "/Users/$(id -un)" UserShell 2>/dev/null | awk '{print $2}')"
+  [ -n "$login_shell" ] || login_shell="${SHELL:-}"
+
+  if [ "$login_shell" = "$brew_bash" ]; then
+    say "setup-bash-completion: login shell is already $brew_bash."
+    say "setup-bash-completion: open a new login shell to load completions."
+    finish 0
+  fi
+
+  # Explain WHY, WHICH script is doing it, and WHAT will happen --- before any
+  # sudo elevation is requested.
+  say ""
+  say "setup-bash-completion: bash-completion@2 needs bash >= 4.2, but your login"
+  say "  shell is '$login_shell' (macOS ships bash 3.2). To fix this for good, this"
+  say "  script can switch your login shell to Homebrew bash."
+  say ""
+  say "    this script: $PROG"
+  say "    new shell:   $brew_bash"
+  say "                 ($("$brew_bash" --version 2>/dev/null | head -1))"
+  say ""
+  say "  What will happen, in order:"
+  say "    1. Append '$brew_bash' to /etc/shells if absent --- this needs sudo,"
+  say "       so you will be prompted for sudo elevation (your login password)."
+  say "    2. Run: chsh -s $brew_bash"
+  say ""
+
+  if ! confirm "Switch your login shell to $brew_bash now?"; then
+    say "setup-bash-completion: skipped. Re-run any time: $PROG"
+    say "  Or do it by hand:"
+    say "    echo '$brew_bash' | sudo tee -a /etc/shells"
+    say "    chsh -s $brew_bash"
+    finish 0
+  fi
+
+  if ! grep -qxF "$brew_bash" /etc/shells 2>/dev/null; then
+    say "setup-bash-completion: adding $brew_bash to /etc/shells (sudo) ..."
+    if ! printf '%s\n' "$brew_bash" | sudo tee -a /etc/shells >/dev/null; then
+      warn "setup-bash-completion: failed to update /etc/shells."
+      finish 1
+    fi
+  fi
+
+  say "setup-bash-completion: running chsh -s $brew_bash ..."
+  if chsh -s "$brew_bash"; then
+    say "setup-bash-completion: done. Log out and back in (or open a new terminal)."
+    finish 0
+  fi
+  warn "setup-bash-completion: chsh failed. Run by hand: chsh -s $brew_bash"
+  finish 1
+}
+
+setup_linux() {
+  # If the package is already on disk, completion is installed --- a new shell
+  # will load it via ~/.bashrc. Nothing to do.
+  if [ -r /usr/share/bash-completion/bash_completion ] || [ -r /etc/bash_completion ]; then
+    say "setup-bash-completion: bash-completion is already installed."
+    say "setup-bash-completion: open a new shell to load it."
+    finish 0
+  fi
+
+  # Map the package manager to its official-repo install command. We NEVER run
+  # any of these without explicit confirmation below.
+  if   command -v apt-get >/dev/null 2>&1; then cmd="sudo apt-get install -y bash-completion"
+  elif command -v dnf     >/dev/null 2>&1; then cmd="sudo dnf install -y bash-completion"
+  elif command -v yum     >/dev/null 2>&1; then cmd="sudo yum install -y bash-completion"
+  elif command -v zypper  >/dev/null 2>&1; then cmd="sudo zypper install -y bash-completion"
+  elif command -v pacman  >/dev/null 2>&1; then cmd="sudo pacman -S --needed --noconfirm bash-completion"
+  elif command -v apk     >/dev/null 2>&1; then cmd="sudo apk add bash-completion"
+  else
+    warn "setup-bash-completion: no known package manager found."
+    warn "  Install your distro's 'bash-completion' package, then start a new shell."
+    finish 1
+  fi
+
+  say ""
+  say "setup-bash-completion: bash completion is not installed."
+  say "  This installs the official 'bash-completion' package from your distro:"
+  say ""
+  say "    $cmd"
+  say ""
+  say "  Nothing is installed unless you confirm."
+
+  if confirm "Run this now?"; then
+    if eval "$cmd"; then
+      say "setup-bash-completion: installed. Start a new shell to load completions."
+      finish 0
+    fi
+    warn "setup-bash-completion: install failed. Run by hand: $cmd"
+    finish 1
+  fi
+  say "setup-bash-completion: skipped. Run it yourself when ready:"
+  say "    $cmd"
+  finish 0
+}
+
+os="$(uname -s 2>/dev/null || echo unknown)"
+case "$os" in
+  Darwin) setup_macos ;;
+  Linux)  setup_linux ;;
+  *)
+    warn "setup-bash-completion: unsupported OS '$os'; nothing to do."
+    finish 0
+    ;;
+esac
