@@ -35,6 +35,40 @@ vi-keys in bash and powershell is key to my happiness.  `set -o vi` is my favour
     thing to type in a reverse shell, even before `python -c 'import
     pty;pty.spawn("/bin/bash")'`.
 
+## Shell completion & fzf
+
+Programmable completion loads in `~/.bashrc` from wherever the platform installed
+it (Homebrew on macOS, distro packages on Linux). When it is missing,
+`setup-bash-completion` (auto-invoked once per shell, snooze-guarded) provisions
+it: on macOS it `brew install`s `bash` + `bash-completion@2` and offers to switch
+the login shell; on Linux it prints the distro package command and prompts before
+installing.
+
+`git <tab>` uses git's own completion (subcommands, branches, remotes, options,
+and your `~/.gitconfig` aliases). It is loaded *after* fzf so it wins the `git`
+completion spec, then re-wrapped by fzf so the fuzzy path trigger still works.
+
+### fzf key bindings
+
+| Key | Action |
+| --- | --- |
+| `CTRL-T` | paste selected files/dirs onto the command line (bat preview) |
+| `CTRL-R` | fuzzy-search command history (full-command preview) |
+| `ALT-C` | `cd` into a selected subdirectory (tree preview) |
+| `ctrl-/` | toggle the preview pane |
+| `<cmd> *<tab>` | fuzzy completion; trigger is `*` (e.g. `vim src/*<tab>`) |
+
+### enabled fzf features
+
+- **Source command**: `fd` (fast, `.gitignore`-aware, includes dotfiles); falls
+  back to `rg --files`, then fzf's builtin walker.
+- **Previews**: `bat` (syntax-highlighted) for files, `tree` for directories, the
+  full command line for `CTRL-R`; degrade to `cat`/`ls` when absent.
+- **Window**: centered tmux popup when the running tmux supports `display-popup`
+  (>= 3.2), otherwise a 40% reverse bottom split.
+- **Helpers** (`fd`, `bat`, `tree`): installed via Homebrew on macOS, prompted on
+  Linux. `rg` is an optional fallback.
+
 ### ~Abandoned~ Features
 <s>This repo used to also provide an up-to-date configuration for bspwm and sxkhd
 that I loved dearly. This text blob is in loving memory of the days where
