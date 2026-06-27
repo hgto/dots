@@ -30,7 +30,8 @@ SOURCE_TRY ~/.config/bash/os-aliases.bash
 SOURCE_TRY ~/.config/bash/hosts/local.private.sh
 hostwise_includes () {
   local fqhost domain hostident
-  fqhost="$(uname -n)"
+  # bash exports $HOSTNAME; avoids forking uname -n every shell
+  fqhost="${HOSTNAME:-$(uname -n)}"
 
   # TODO: impl domain, fqdn label pop til 2 labels, maybe
   # TODO: STOP OVERENGINEERING EVERYTHING

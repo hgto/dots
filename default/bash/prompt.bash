@@ -11,8 +11,7 @@ bash_prompt_setup () {
   # local W='\033[0;37m' # white
   # local RST='\033[0m' # Text reset
 
-  local F begrenzer=' ' benutzer='' promptchar='$'
-  local H="\[\e[0;$(__strfarbe__ "$HOSTNAME")m\]"
+  local F H begrenzer=' ' benutzer='' promptchar='$'
   local R='\[\e[0m\]'
   local BOLD='\[\033[1m\]'
   local S='\[${statusfarbecode}\]'
@@ -22,7 +21,8 @@ bash_prompt_setup () {
     promptchar='#'
     farbeint=31
   else
-    farbeint="$(__intfarbe__ "$EUID")"
+    # native bash arithmetic; was: echo "ibase=10;((EUID+1)%5)+32" | bc
+    farbeint=$(( (EUID + 1) % 5 + 32 ))
   fi
   F="\[\e[0;${farbeint}m\]"
 
@@ -33,6 +33,9 @@ bash_prompt_setup () {
   fi
 
   if [[ "x$begrenzer" != 'x '  ]] || [[ -n "$SAFE_PROMPT" ]]; then
+    # host colour only shows here (SSH/docker/SAFE_PROMPT); skip the md5+bc
+    # subshells entirely on plain local shells where it would be discarded.
+    H="\[\e[0;$(__strfarbe__ "$HOSTNAME")m\]"
     benutzer="${F}\\u${H}@\\h${R}${begrenzer}"
   fi
 
@@ -70,25 +73,9 @@ __strfarbe__ ()  {
     done
   fi
 }
-__intfarbe__ ()  {
-  # Converts integer to one of four ANSI colour codes
-  (($# != 1)) && return 1
-  local pybin
-
-  if command -V bc >/dev/null 2>&1; then
-    echo "ibase=10;((${1}+1)%5)+32" | bc
-  else
-    for pybin in python3 python; do
-      if command -V $pybin >/dev/null 2>&1; then
-        $pybin -uEc "print('{}'.format(${1}%0x5+0x20))"
-        break
-      fi
-    done
-  fi
-}
 
 bash_prompt_setup
-unset bash_prompt_setup __strfarbe__ __intfarbe__
+unset bash_prompt_setup __strfarbe__
 
 ___VIRTUALENV_PROMPT__ () {
   {

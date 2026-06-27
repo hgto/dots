@@ -141,9 +141,15 @@ case "$OSTYPE" in
 esac
 
 #{{{1 iamgr00t amirite?
-FOWN="$(stat -L -c %u ~/.profile 2>/dev/null)" \
-  || FOWN="$(stat -L -f %u ~/.profile 2>/dev/null)" \
-  || FOWN=9999
+# BSD (darwin) takes -f, GNU (linux) takes -c; try the native form first so we
+# don't fork a doomed stat on every shell. Other form is the fallback.
+case "$OSTYPE" in
+  darwin*) FOWN="$(stat -L -f %u ~/.profile 2>/dev/null)" \
+             || FOWN="$(stat -L -c %u ~/.profile 2>/dev/null)" ;;
+  *)       FOWN="$(stat -L -c %u ~/.profile 2>/dev/null)" \
+             || FOWN="$(stat -L -f %u ~/.profile 2>/dev/null)" ;;
+esac
+[ -n "$FOWN" ] || FOWN=9999
 if [ $EUID != "$FOWN" ] || [ $EUID -eq 0 ]; then
   TMOUT=300
   ADJUNCT_PATH /usr/local/sbin    OVERRIDE
