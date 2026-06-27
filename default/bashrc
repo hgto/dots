@@ -144,6 +144,21 @@ SOURCE_FIRST 2>/dev/null \
   /usr/share/doc/fzf/examples/key-bindings.bash \
   /usr/local/opt/fzf/shell/key-bindings.bash
 
+#{{{1 git command completion (subcommands, branches, remotes, options)
+#-------------------------------------------------------------------------------
+# git.bash above is only the __git_ps1 *prompt*; this is the real `git <tab>`
+# completion. MUST come after fzf: fzf's completion.bash claims `git` for path
+# completion, so loading this last lets git's own completion win. Covers brew
+# git, Linux distro packages, and Apple Git (CommandLineTools / Xcode).
+SOURCE_FIRST 2>/dev/null \
+  /opt/homebrew/share/bash-completion/completions/git \
+  /usr/local/share/bash-completion/completions/git \
+  /usr/share/bash-completion/completions/git \
+  /Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash \
+  /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-completion.bash \
+  /usr/share/doc/git/contrib/completion/git-completion.bash \
+  /etc/bash_completion.d/git
+
 #{{{1 includes for bash
 #-------------------------------------------------------------------------------
 . ~/.config/bash/git.bash
