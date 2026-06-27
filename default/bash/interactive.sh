@@ -50,7 +50,5 @@ hostwise_includes () {
 hostwise_includes
 unset -f hostwise_includes
 
-# gitid completion (vendored submodule)
-if command -v gitid >/dev/null 2>&1; then
-  eval "$(gitid completion bash)"
-fi
+# gitid completion (static file deployed by toda; no subshell)
+SOURCE_TRY ~/.config/bash/gitid-completion.bash
