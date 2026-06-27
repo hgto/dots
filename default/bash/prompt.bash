@@ -112,4 +112,4 @@ ___EXITSTAT () {
     statusfarbecode=''
   fi
 }
-PROMPT_COMMAND='___EXITSTAT'
+PROMPT_COMMAND='___EXITSTAT; history -a'

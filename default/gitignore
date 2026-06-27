@@ -26,3 +26,7 @@ tags
 .tags
 .netrwhist
 .vim
+
+# Git worktrees (used by Claude Code and manual parallel-work branches)
+.worktrees/
+.claude/worktrees/

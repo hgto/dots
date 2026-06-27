@@ -1,4 +1,4 @@
-#
+# vi: ft=bash tw=0 ts=2 sw=2 sts=2 fdm=marker fmr={{{,}}} et:
 # Assumptions: Bash-compatible interactive shell.
 # Ergo: Bashisms are authorized.
 # https://wiki.bash-hackers.org/scripting/bashchanges
@@ -19,7 +19,7 @@ SOURCE_FIRST () {
 
 #{{{1 source base
 #-------------------------------------------------------------------------------
-# source this or error verbosel
+# source this or error verbosely
 . ~/.config/bash/aliases.sh
 
 # os-aliases.bash might not exist
