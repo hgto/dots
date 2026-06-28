@@ -36,6 +36,7 @@ $ vimfiles
 $ mux
 ~/.tmux.conf: ./default/tmux.conf
 ~/.screenrc: ./default/screenrc
+~/.tmux/plugins/fzf-pane-switch.tmux: ./vendor/fzf-pane-switch.tmux
 
 $ git
 ~/.gitignore: ./default/gitignore
