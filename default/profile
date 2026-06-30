@@ -55,7 +55,7 @@ ADJUNCT_PATH '/usr/local/bin'       OVERRIDE
 
 export PATH EDITOR VISUAL MANPATH
 
-for e in nvim vim vi ed nano; do
+for e in vim vi ed nano; do
   has "$e" && EDITOR="$e" && break
 done
 VISUAL="$EDITOR"
