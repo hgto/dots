@@ -1,0 +1,13 @@
+#!/bin/sh
+# lazyvim: run LazyVim isolated via NVIM_APPNAME.
+# Config, data, state and cache all live under a "lazyvim" namespace, so this
+# never touches your normal ~/.config/nvim. Bootstraps the starter on first run
+# only if the config is absent; the clone's .git is removed so it stays out of
+# git entirely.
+set -e
+cfg="${XDG_CONFIG_HOME:-$HOME/.config}/lazyvim"
+if [ ! -d "$cfg" ]; then
+  git clone --depth 1 https://github.com/LazyVim/starter "$cfg"
+  rm -rf "$cfg/.git"
+fi
+exec env NVIM_APPNAME=lazyvim nvim "$@"
