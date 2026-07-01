@@ -41,6 +41,30 @@ else
   alias ls='ls -hF'
 fi
 
+#{{{1 git worktrees
+worktrees () {
+  local top line wt
+  top="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+    >&2 echo "worktrees: not inside a git repository"
+    return 1
+  }
+  if has fzf; then
+    line="$(git -C "$top" worktree list |
+      fzf --reverse --header='cd to worktree' \
+        --preview 'git -C {1} log --oneline --decorate -15 --color=always' \
+        --preview-window=right,55%)" || return 1   # nonzero == cancelled
+    wt="${line%% *}"
+  else
+    local disp=()
+    while IFS= read -r line; do disp+=("$line"); done \
+      < <(git -C "$top" worktree list)
+    select line in "${disp[@]}"; do
+      [[ -n "$line" ]] && { wt="${line%% *}"; break; }
+    done
+  fi
+  [[ -n "$wt" ]] && cd -- "$wt"
+}
+
 
 #{{{1 Language and LC
 lca_derive () {
