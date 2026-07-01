@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# cc-tmux-window-name
+# Give the current tmux window a short, stable name derived from the git
+# context of a Claude Code session: "repo/worktree" (e.g. dots/july-1-changes),
+# with a collision-only numeric suffix (#2, #3) when two sessions share a
+# worktree. Replaces the old hook that copied CC's verbose session summary.
+#
+# Wired from ~/.claude/settings.json as a SessionStart / UserPromptSubmit hook.
+# Stdin: hook JSON, from which we read .cwd (falls back to $CLAUDE_PROJECT_DIR,
+# then $PWD). Requires $TMUX and $TMUX_PANE; a no-op otherwise.
+#
+# Behaviour:
+#   - repo     = basename of the parent of `git rev-parse --git-common-dir`
+#   - worktree = basename of `git rev-parse --show-toplevel`
+#   - base     = repo/worktree, or repo/branch in the main checkout, or the
+#                cwd basename outside a git repo.
+#   - the chosen name is stored in the window option @cc_wname so re-runs are
+#     stable (no renumbering) and a manual `rename-window` is left untouched.
+#
+# Always exits 0 so it never breaks the hook chain.
+set -uo pipefail
+
+# Only meaningful inside tmux.
+[ -n "${TMUX:-}" ] && [ -n "${TMUX_PANE:-}" ] || exit 0
+
+input=""
+[ -t 0 ] || input="$(cat)"
+
+cwd=""
+if [ -n "$input" ]; then
+  cwd="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null || true)"
+fi
+[ -n "$cwd" ] || cwd="${CLAUDE_PROJECT_DIR:-$PWD}"
+
+# --- derive the base name --------------------------------------------------
+base=""
+if git_common="$(git -C "$cwd" rev-parse --git-common-dir 2>/dev/null)"; then
+  # Resolve to an absolute path so `dirname` gives the repo directory.
+  git_common="$(cd "$cwd" && cd "$git_common" && pwd)"
+  repo="$(basename "$(dirname "$git_common")")"
+  toplevel="$(git -C "$cwd" rev-parse --show-toplevel 2>/dev/null || true)"
+  worktree="$(basename "${toplevel:-$cwd}")"
+  branch="$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+
+  if [ -n "$toplevel" ] && [ "$worktree" != "$repo" ]; then
+    # A linked worktree whose dir name differs from the repo.
+    base="$repo/$worktree"
+  elif [ -n "$branch" ] && [ "$branch" != "HEAD" ]; then
+    # Main checkout on a branch.
+    base="$repo/$branch"
+  else
+    # Detached HEAD in the main checkout.
+    base="$repo"
+  fi
+else
+  base="$(basename "$cwd")"
+fi
+
+[ -n "$base" ] || exit 0
+
+# --- identify this window --------------------------------------------------
+win_id="$(tmux display-message -t "$TMUX_PANE" -p '#{window_id}' 2>/dev/null || true)"
+[ -n "$win_id" ] || exit 0
+
+cur_name="$(tmux display-message -t "$win_id" -p '#{window_name}' 2>/dev/null || true)"
+stored="$(tmux display-message -t "$win_id" -p '#{@cc_wname}' 2>/dev/null || true)"
+
+# Respect a manual rename: if we set a name before and the user has since
+# changed it, leave it alone.
+if [ -n "$stored" ] && [ "$cur_name" != "$stored" ]; then
+  exit 0
+fi
+
+# If we already own a name for this base, keep it verbatim (stable, no renumber).
+if [ -n "$stored" ]; then
+  case "$stored" in
+    "$base"|"$base#"*) exit 0 ;;
+  esac
+fi
+
+# --- collision-only numeric suffix ----------------------------------------
+# Names currently used by *other* windows anywhere in the server.
+others="$(tmux list-windows -a -F '#{window_id}	#{window_name}' 2>/dev/null \
+  | awk -F'\t' -v me="$win_id" '$1 != me { print $2 }')"
+
+name="$base"
+if printf '%s\n' "$others" | grep -Fxq "$base"; then
+  n=2
+  while printf '%s\n' "$others" | grep -Fxq "$base#$n"; do
+    n=$((n + 1))
+  done
+  name="$base#$n"
+fi
+
+# --- apply -----------------------------------------------------------------
+tmux set-window-option -t "$win_id" automatic-rename off 2>/dev/null || true
+tmux rename-window -t "$win_id" "$name" 2>/dev/null || true
+tmux set-window-option -t "$win_id" @cc_wname "$name" 2>/dev/null || true
+
+exit 0
