@@ -42,6 +42,16 @@ export \
   LESSSECURE='1' LESSHISTFILE='-' LESSCHARSET='utf-8' \
   LESS="--no-init --quit-if-one-screen --quit-on-intr --force --dumb --ignore-case --no-lessopen --RAW-CONTROL-CHARS --tilde --shift 8 --chop-long-lines"
 
+#{{{1 Homebrew hardening
+#-------------------------------------------------------------------------------
+# Pin security-relevant defaults so they survive future Homebrew version changes
+# and apply consistently across machines (including Linuxbrew).
+export \
+  HOMEBREW_NO_ANALYTICS=1 \
+  HOMEBREW_NO_INSECURE_REDIRECT=1 \
+  HOMEBREW_REQUIRE_TAP_TRUST=1 \
+  HOMEBREW_FORBID_PACKAGES_FROM_PATHS=1
+
 #{{{1 Computed Constants and PATH
 #-------------------------------------------------------------------------------
 
@@ -116,6 +126,10 @@ case "$OSTYPE" in
     ADJUNCT_PATH /usr/local/opt/coreutils/libexec/gnubin OVERRIDE
     ADJUNCT_PATH /opt/local/libexec/gnubin/              OVERRIDE
     ADJUNCT_PATH /opt/local/bin                          OVERRIDE
+    # Homebrew (Apple Silicon /opt/homebrew; Intel /usr/local already above).
+    # Last OVERRIDE wins (prepend-last = front of PATH) so these beat MacPorts.
+    ADJUNCT_PATH /opt/homebrew/sbin                      OVERRIDE
+    ADJUNCT_PATH /opt/homebrew/bin                       OVERRIDE
     if [ -d /opt/local/share/man ]; then
       # TODO: ADJUNCT_PATH with ${!SOMEPATHVAR} underlaying
       #       HI FUTURE SELF: remember u get so grumpy if manpath is wrong before u change dis

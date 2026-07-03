@@ -17,7 +17,7 @@ $ shell
 ~/.inputrc: ./default/inputrc
 ~/.ipython/profile_default/ipython_config.py: ./default/ipython_config.py
 ~/.config/badssl.cnf: ./default/badssl.cnf
-~/.config/ghostty/config: ./default/ghostty.config
+~/.config/ghostty/config.ghostty: ./default/ghostty.config
 ~/.claude/settings.json: ./default/claude_settings.json
 ~/.claude/CLAUDE.md: ./default/GLOBAL_AGENTS.md
 ~/.config/opencode/AGENTS.md: ./default/GLOBAL_AGENTS.md
