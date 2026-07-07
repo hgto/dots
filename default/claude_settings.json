@@ -7,5 +7,17 @@
     "permissions": {
         "defaultMode": "auto",
         "ask": ["Bash(git push *)", "Bash(docker compose down *)"]
+    },
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Bash",
+                "hooks": [{"type": "command", "command": "$HOME/Projects/dots/default/git-guard/block-commit-on-main.sh"}]
+            },
+            {
+                "matcher": "Write|Edit",
+                "hooks": [{"type": "command", "command": "$HOME/Projects/dots/default/git-guard/block-edit-on-main.sh"}]
+            }
+        ]
     }
 }
