@@ -37,6 +37,7 @@ $ mux
 ~/.tmux.conf: ./default/tmux.conf
 ~/.screenrc: ./default/screenrc
 ~/.tmux/plugins/fzf-pane-switch.tmux: ./vendor/fzf-pane-switch.tmux
+~/.tmux/plugins/tmux-fzf-url: ./vendor/tmux-fzf-url
 
 $ git
 ~/.gitignore: ./default/gitignore

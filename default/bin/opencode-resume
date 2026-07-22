@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+for command in opencode jq fzf; do
+  if ! command -v "$command" >/dev/null 2>&1; then
+    printf '%s: required command not found: %s\n' "${0##*/}" "$command" >&2
+    exit 1
+  fi
+done
+
+sessions="$(mktemp "${TMPDIR:-/tmp}/opencode-sessions.XXXXXX")"
+trap 'rm -f "$sessions"' EXIT
+opencode session list --format json >"$sessions"
+
+if [ "$(jq 'length' "$sessions")" -eq 0 ]; then
+  printf '%s\n' 'No OpenCode sessions found' >&2
+  exit 1
+fi
+
+selected="$(jq -r '
+  .[]
+  | [.id, (.updated / 1000 | strflocaltime("%Y-%m-%d %H:%M")), .title, .directory]
+  | @tsv
+' "$sessions" | fzf --reverse --delimiter=$'\t' --with-nth=2.. \
+  --header='Resume OpenCode session: updated  title  directory')" || exit 0
+
+session_id="${selected%%$'\t'*}"
+directory="$(jq -r --arg id "$session_id" '.[] | select(.id == $id) | .directory' "$sessions")"
+
+if [ ! -d "$directory" ]; then
+  printf '%s: session directory no longer exists: %s\n' "${0##*/}" "$directory" >&2
+  exit 1
+fi
+
+exec opencode "$directory" --session "$session_id"

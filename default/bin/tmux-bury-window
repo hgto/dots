@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+bury_session="${TMUX_BURY_SESSION:-buried}"
+target_pane="${2:-${TMUX_PANE:-}}"
+
+usage() {
+  printf 'usage: %s bury|exhume|list\n' "${0##*/}" >&2
+  exit 2
+}
+
+require_tmux() {
+  if [ -z "${TMUX:-}" ] || [ -z "$target_pane" ]; then
+    printf '%s: must run inside tmux\n' "${0##*/}" >&2
+    exit 1
+  fi
+}
+
+bury() {
+  local source_session source_window sentinel
+  require_tmux
+
+  source_session="$(tmux display-message -t "$target_pane" -p '#{session_name}')"
+  source_window="$(tmux display-message -t "$target_pane" -p '#{window_id}')"
+
+  if [ "$source_session" = "$bury_session" ]; then
+    tmux display-message 'Window is already buried'
+    exit 1
+  fi
+  if [ "$(tmux display-message -t "$target_pane" -p '#{session_windows}')" -le 1 ]; then
+    tmux display-message 'Cannot bury the only window in a session'
+    exit 1
+  fi
+
+  sentinel=""
+  if ! tmux has-session -t "=$bury_session" 2>/dev/null; then
+    sentinel="$(tmux new-session -d -P -F '#{window_id}' -s "$bury_session" -n sentinel)"
+  fi
+
+  if ! tmux move-window -s "$source_window" -t "=$bury_session:"; then
+    [ -z "$sentinel" ] || tmux kill-session -t "=$bury_session"
+    exit 1
+  fi
+  [ -z "$sentinel" ] || tmux kill-window -t "$sentinel"
+  tmux display-message "Buried window in $bury_session"
+}
+
+list() {
+  tmux has-session -t "=$bury_session" 2>/dev/null || exit 0
+  tmux list-windows -t "=$bury_session" \
+    -F '#{window_id}	#{window_index}	#{window_name}	#{pane_current_path}	#{pane_current_command}'
+}
+
+exhume() {
+  local destination selected window_id
+  require_tmux
+
+  if ! tmux has-session -t "=$bury_session" 2>/dev/null; then
+    tmux display-message 'No buried windows'
+    exit 0
+  fi
+
+  destination="$(tmux display-message -t "$target_pane" -p '#{session_id}')"
+  if [ "$(tmux display-message -t "$target_pane" -p '#{session_name}')" = "$bury_session" ]; then
+    tmux display-message 'Exhume windows from a working session'
+    exit 1
+  fi
+
+  selected="$(list | fzf --tmux 'center,85%,70%' --reverse --delimiter=$'\t' \
+    --with-nth=2.. --header='Exhume buried window')" || exit 0
+  window_id="${selected%%$'\t'*}"
+
+  tmux move-window -s "$window_id" -t "$destination:"
+  tmux switch-client -t "$window_id"
+}
+
+case "${1:-}" in
+  bury) bury ;;
+  exhume) exhume ;;
+  list) list ;;
+  *) usage ;;
+esac

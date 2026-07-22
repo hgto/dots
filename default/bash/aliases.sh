@@ -11,6 +11,7 @@ alias \
   tmxlb='tmux loadb -' \
   cdtl='cd "$(git rev-parse --show-toplevel)"' \
   cc='claude' \
+  ocr='opencode-resume' \
   rmi='/bin/rm -i' \
   tree='tree -C' \
   grep='grep --color=auto' \
