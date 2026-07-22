@@ -30,3 +30,5 @@ tags
 # Git worktrees (used by Claude Code and manual parallel-work branches)
 .worktrees/
 .claude/worktrees/
+
+**/.claude/settings.local.json
