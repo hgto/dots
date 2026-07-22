@@ -19,10 +19,15 @@ $ shell
 ~/.config/badssl.cnf: ./default/badssl.cnf
 ~/.config/ghostty/config: ./default/ghostty.config
 ~/.claude/settings.json: ./default/claude_settings.json
+~/.claude/CLAUDE.md: ./default/global_AGENTS.md
+~/.config/opencode/AGENTS.md: ./default/global_AGENTS.md
 
 $ vim
 ~/.vimrc: @delete
 ~/.gvimrc: @delete
+~/.config/nvim/init.vim: @delete
+~/.config/nvim/ginit.vim: @delete
+~/.config/nvim/coc-settings.json: @delete
 ~/.config/nvim/: ./default/nvim/*
 ~/.vim/: ./default/vimdir/*
 
@@ -58,6 +63,9 @@ $ net
 
 $ windows
 @include: vimfiles git net powershell_windows ssh_windows
+~/AppData/Local/nvim/init.vim: @delete
+~/AppData/Local/nvim/ginit.vim: @delete
+~/AppData/Local/nvim/coc-settings.json: @delete
 ~/AppData/Local/nvim/: ./default/nvim/*
 ~/AppData/Roaming/alacritty/alacritty.yml: ./alacritty.yml
 
