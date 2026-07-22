@@ -27,9 +27,10 @@ tmux config everywhere: versions 1.7 and all work roughly the same, using
   a single config file (black magic!) This is a big deal, because the tmux
   developer is a fan of breaking changes in config files.
 
-vim and neovim: share a single set of configuration files.  When you run as
-  root, no plugins are loaded. You can also force this by setting the `SAFEVI`
-  environment variable.
+vim and neovim use separate configurations. Neovim requires 0.12 and uses its
+  native package manager; Vim remains the portable fallback. When you run as
+  root, Vim loads no plugins. Neovim's plugin-free mode can be forced by setting
+  the `SAFEVI` environment variable.
 
 vi-keys in bash and powershell is key to my happiness.  `set -o vi` is my favourite
     thing to type in a reverse shell, even before `python -c 'import

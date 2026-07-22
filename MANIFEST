@@ -23,9 +23,7 @@ $ shell
 $ vim
 ~/.vimrc: @delete
 ~/.gvimrc: @delete
-~/.config/nvim/init.vim: ./default/vimdir/vimrc
-~/.config/nvim/ginit.vim: ./default/vimdir/gvimrc
-~/.config/nvim/coc-settings.json: ./default/vimdir/coc-settings.json
+~/.config/nvim/: ./default/nvim/*
 ~/.vim/: ./default/vimdir/*
 
 $ vimfiles
@@ -60,8 +58,7 @@ $ net
 
 $ windows
 @include: vimfiles git net powershell_windows ssh_windows
-~/AppData/Local/nvim/init.vim: ./default/vimdir/vimrc
-~/AppData/Local/nvim/ginit.vim: ./default/vimdir/gvimrc
+~/AppData/Local/nvim/: ./default/nvim/*
 ~/AppData/Roaming/alacritty/alacritty.yml: ./alacritty.yml
 
 $ powershell_windows
