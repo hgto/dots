@@ -8,6 +8,13 @@ assert(vim.fn.maparg("gb", "n") ~= "")
 assert(vim.fn.maparg("<leader>b", "n") ~= "")
 assert(vim.fn.maparg("<leader><leader>", "n") ~= "")
 
+vim.cmd.enew()
+vim.bo.filetype = "markdown"
+assert(vim.bo.textwidth == 80)
+for _, flag in ipairs({ "t", "n", "j", "1" }) do
+  assert(vim.bo.formatoptions:find(flag, 1, true))
+end
+
 if not vim.env.SAFEVI then
   assert(vim.fn.exists(":Worktrees") == 2)
   assert(vim.fn.exists(":PRWorktree") == 2)

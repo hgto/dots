@@ -26,7 +26,7 @@ vim.api.nvim_create_autocmd("FileType", {
   group = group,
   pattern = { "markdown", "text", "mail" },
   callback = function()
-    vim.opt_local.formatoptions:append({ "t", "n", "j", "1" })
+    vim.opt_local.formatoptions:append("tnj1")
     vim.opt_local.comments = "n:>,n:*,n:+,n:-"
     if vim.bo.filetype == "markdown" then
       vim.opt_local.textwidth = 80
