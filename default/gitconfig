@@ -73,6 +73,7 @@
   rewrite-datez = "!set -xue;DATUM=\"$(date -u -R -d \"$1\")\"; shift; GIT_AUTHOR_DATE=\"$DATUM\" GIT_COMMITTER_DATE=\"$DATUM\" git commit --amend --date \"$DATUM\""
 
   wta           = "!doit() { set -eu; BRANCH=\"$1\"; [ $# -eq 2 ] && ODIR=\"$2\" || ODIR=\"$(printf %s \"$BRANCH\" | sed -e 's/pc-[[:digit:]]\\{4,5\\}//i' | tr -d '\\-_/1234567890' | tr '[:upper:]' '[:lower:]')\"; git worktree add ../$ODIR $BRANCH; }; doit"
+	grep-blame = "!f() { esc=$(printf '\\033'); R=\"${esc}[0m\"; HDR=\"${esc}[1;34m\"; Y=\"${esc}[33m\"; G=\"${esc}[32m\"; C=\"${esc}[36m\"; D=\"${esc}[2m\"; last=\"\"; git grep -n --no-color \"$@\" | while IFS=: read -r file line _; do if [ \"$file\" != \"$last\" ]; then printf '\\n%s%s%s\\n' \"$HDR\" \"$file\" \"$R\"; last=\"$file\"; fi; git blame -L \"$line,$line\" --date=short -- \"$file\" | awk -v Y=\"$Y\" -v G=\"$G\" -v C=\"$C\" -v D=\"$D\" -v R=\"$R\" '{ hash=$1; op=index($0,\"(\"); cp=index($0,\")\"); inside=substr($0,op+1,cp-op-1); n=split(inside,a,\" \"); ln=a[n]; date=a[n-1]; author=a[1]; for(i=2;i<=n-2;i++) author=author\" \"a[i]; content=substr($0,cp+2); printf \"  %s%5s%s  %s%s%s  %s%-18s%s  %s%s%s  %s\\n\", D,ln,R, Y,hash,R, G,author,R, C,date,R, content }'; done; }; f"
 
 [color]
   ui                = auto
