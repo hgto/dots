@@ -1,0 +1,77 @@
+#!/usr/bin/env sh
+# Global git hook dispatcher.
+#
+# Runs either as the `core.hooksPath` dispatcher itself, or chained behind
+# another one (gitid sets `gitid.prevHooksPath` and calls us). See gitconfig.
+#
+# Setting core.hooksPath globally REPLACES every repo's .git/hooks directory,
+# so this dispatcher does two jobs:
+#
+#   1. commit-msg: strip Claude/Anthropic auto-attribution co-author trailers
+#      from the commit message. This is defense-in-depth behind Claude Code's
+#      `includeCoAuthoredBy: false` setting (which is deprecated and only
+#      suppresses the AUTO-appended trailer, not a trailer written literally
+#      into a `git commit -m` message or pasted from a plan).
+#
+#   2. For every hook: delegate to the repo-local hook of the same name, if one
+#      exists, so per-repo hooks (husky, pre-commit, etc.) keep working.
+#
+# Each standard client hook name in this directory is a symlink to this script;
+# the hook being run is determined from the invoked name ($0).
+set -u
+
+hook=$(basename "$0")
+
+# --- Job 1: strip Claude/Anthropic co-author trailers from the commit message.
+if [ "$hook" = "commit-msg" ] && [ -n "${1:-}" ] && [ -f "$1" ]; then
+  tmp=$(mktemp) || exit 0
+  # Drop any "Co-authored-by:" trailer referencing anthropic (the canonical
+  # Claude Code byline is "<noreply@anthropic.com>"). Human co-authors are kept.
+  grep -viE '^[[:space:]]*co-authored-by:.*anthropic' "$1" > "$tmp" 2>/dev/null
+  # Remove blank lines left dangling at the end of the message.
+  awk 'NF{last=NR} {line[NR]=$0} END{for (i=1; i<=last; i++) print line[i]}' \
+    "$tmp" > "$1"
+  rm -f "$tmp"
+fi
+
+# --- Job 2: delegate to a repo-local hook of the same name, if present.
+#
+# Skip this when we're chained behind another global dispatcher. gitid's
+# dispatcher walks `gitid.prevHooksPath` (us) and THEN the repo-local hooks, so
+# delegating here too would run husky/pre-commit/lefthook twice per operation.
+#
+# We're chained, not primary, when BOTH hold:
+#   - core.hooksPath for this repo is somebody else (gitid), and
+#   - gitid.prevHooksPath points back at our own directory.
+# Testing core.hooksPath as well as prevHooksPath matters: a repo that points
+# core.hooksPath straight at us is using us as the primary dispatcher, and must
+# still get delegation even when a global prevHooksPath happens to name us.
+resolve_dir() {
+  # git expands a leading `~` in config values; plain `cd` does not. The quoted
+  # tildes below are match patterns for a literal `~`, not paths to expand.
+  # shellcheck disable=SC2088
+  case "$1" in
+    "~/"*) set -- "$HOME/${1#\~/}" ;;
+    "~")   set -- "$HOME" ;;
+  esac
+  # shellcheck disable=SC1007  # `CDPATH= cd` clears CDPATH for this command only
+  CDPATH= cd -- "$1" 2>/dev/null && pwd -P
+}
+
+self_dir=$(resolve_dir "$(dirname -- "$0")" || true)
+prev_dir=$(resolve_dir "$(git config --get gitid.prevHooksPath 2>/dev/null || true)" || true)
+this_dir=$(resolve_dir "$(git config --get core.hooksPath 2>/dev/null || true)" || true)
+
+if [ -n "$self_dir" ] && [ "$prev_dir" = "$self_dir" ] && [ "$this_dir" != "$self_dir" ]; then
+  exit 0
+fi
+
+# core.hooksPath replaced .git/hooks, so find it explicitly. Use the COMMON git
+# dir so delegation works from linked worktrees too (shared .git/hooks).
+git_dir=$(git rev-parse --git-common-dir 2>/dev/null) || exit 0
+local_hook="$git_dir/hooks/$hook"
+if [ -x "$local_hook" ]; then
+  exec "$local_hook" "$@"
+fi
+
+exit 0
