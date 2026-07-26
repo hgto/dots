@@ -1,7 +1,7 @@
 # vi: ft=make et
 
 $ default
-@include: shell vim mux git net bin ssh hgto
+@include: shell vim mux git net bin ssh agentskills
 
 $ bin
 ~/bin/: ./default/bin/*
@@ -19,8 +19,15 @@ $ shell
 ~/.config/badssl.cnf: ./default/badssl.cnf
 ~/.config/ghostty/config: ./default/ghostty.config
 ~/.claude/settings.json: ./default/claude_settings.json
-~/.claude/CLAUDE.md: ./default/global_AGENTS.md
-~/.config/opencode/AGENTS.md: ./default/global_AGENTS.md
+~/.claude/CLAUDE.md: ./default/GLOBAL_AGENTS.md
+~/.config/opencode/AGENTS.md: ./default/GLOBAL_AGENTS.md
+~/.codex/AGENTS.md: ./default/GLOBAL_AGENTS.md
+
+$ agentskills
+# one symlink per skill dir, so plugin-installed skills aren't clobbered.
+# opencode auto-loads ~/.claude/skills as an external skill root.
+~/.claude/skills/: ./default/skills/*
+~/.codex/skills/: ./default/skills/*
 
 $ vim
 ~/.vimrc: @delete
