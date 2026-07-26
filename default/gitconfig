@@ -110,6 +110,9 @@
   whitespace        = blank-at-eof,blank-at-eol,space-before-tab,-indent-with-non-tab,tab-in-indent
   autocrlf          = input
   excludesfile      = ~/.gitignore
+  ; Global hook dispatcher. gitid owns core.hooksPath and chains onward to
+  ; gitid.prevHooksPath (below) and then each repo's own .git/hooks.
+	hooksPath = ~/.config/git/hooks
 
 [branch]
   autosetupmerge    = false
@@ -175,3 +178,11 @@
 [pull]
   rebase = true
 
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[user]
+	useConfigOnly = true
