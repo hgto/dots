@@ -1,0 +1,23 @@
+approvals_reviewer = "user"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+
+[plugins."slack@openai-curated"]
+enabled = true
+
+[plugins."codex-security@openai-curated"]
+enabled = true
+
+[plugins."github@openai-curated"]
+enabled = false
+
+[plugins."linear@openai-curated"]
+enabled = true
+
+[plugins."notion@openai-curated"]
+enabled = true
+
+[mcp_servers.aws-mcp]
+command = "uvx"
+args = ["mcp-proxy-for-aws@latest", "https://aws-mcp.us-east-1.api.aws/mcp", "--metadata", "INSTALL_SOURCE=aws-cli"]

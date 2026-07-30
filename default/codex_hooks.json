@@ -1,0 +1,25 @@
+{
+  "description": "Keep task work off mainline checkouts.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/Projects/dots/default/git-guard/block-commit-on-main.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "^(apply_patch|Edit|Write)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/Projects/dots/default/git-guard/block-edit-on-main.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -22,12 +22,15 @@ $ shell
 ~/.claude/CLAUDE.md: ./default/GLOBAL_AGENTS.md
 ~/.config/opencode/AGENTS.md: ./default/GLOBAL_AGENTS.md
 ~/.codex/AGENTS.md: ./default/GLOBAL_AGENTS.md
+~/.codex/config.toml: ./default/codex_config.toml
+~/.codex/hooks.json: ./default/codex_hooks.json
 
 $ agentskills
 # one symlink per skill dir, so plugin-installed skills aren't clobbered.
-# opencode auto-loads ~/.claude/skills as an external skill root.
+# opencode auto-loads ~/.claude/skills as an external skill root; Codex uses
+# the shared agent-skills location.
 ~/.claude/skills/: ./default/skills/*
-~/.codex/skills/: ./default/skills/*
+~/.agents/skills/: ./default/skills/*
 
 $ vim
 ~/.vimrc: @delete

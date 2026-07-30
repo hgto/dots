@@ -1,6 +1,6 @@
 # Git worktree workflow
 
-This file is the shared source of guidance for the worktree-first git workflow. It is referenced from `~/.claude/CLAUDE.md` (Claude Code) and `~/.config/opencode/AGENTS.md` (opencode).
+This file is the shared source of guidance for the worktree-first git workflow. It is referenced from the global instruction files for Claude Code, opencode, and Codex.
 
 ---
 
@@ -58,6 +58,12 @@ git worktree add .worktrees/task-b -b task-b origin/main
 # run agents pointing at each worktree; merge afterwards
 ```
 
+### Codex
+
+The ChatGPT desktop app can create managed worktrees under
+`$CODEX_HOME/worktrees`. For CLI work, create `.worktrees/<name>` explicitly,
+as shown above. Give each parallel task its own worktree.
+
 ---
 
 ## Merging and cleanup
@@ -77,7 +83,10 @@ git branch -d <name>
 
 Located at `~/Projects/dots/default/git-guard/block-commit-on-main.sh`.
 
-The guard is a **PreToolUse hook** registered globally in `~/.claude/settings.json`. It intercepts every Bash tool call and blocks `git commit` when the current branch is `main` or `master`. It is **opt-in per repo** — it does nothing unless the repo has the flag set.
+The guard is a **PreToolUse hook** registered globally for Claude Code and
+Codex. It intercepts every Bash tool call and blocks `git commit` in the
+primary checkout, regardless of its branch name. It is **opt-in per repo** —
+it does nothing unless the repo has the flag set.
 
 ### Enable in a repo
 
@@ -113,6 +122,13 @@ git config --unset guard.blockMainCommit
   ]
 }
 ```
+
+### Wiring (Codex)
+
+`~/.codex/hooks.json` uses the same `PreToolUse` command hook for `Bash`.
+Codex's `apply_patch`/`Edit`/`Write` matcher also runs
+`block-edit-on-main.sh`, which falls back to the session working directory
+when a tool call doesn't expose one target path.
 
 ---
 

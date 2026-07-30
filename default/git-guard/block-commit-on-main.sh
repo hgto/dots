@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # block-commit-on-main.sh
-# Deny `git commit` on main/master branches.
+# Deny `git commit` in the primary checkout (mainline).
 # Shared by Claude Code (PreToolUse hook) and opencode (tool.execute.before plugin).
 #
 # Stdin: JSON with { "tool_input": { "command": "..." }, "cwd": "..." }
@@ -30,16 +30,13 @@ printf '%s' "$cmd" | grep -Eq \
   '(^|[;&|[:space:]])git([[:space:]]+-[^[:space:]]+|[[:space:]]+-C[[:space:]]+[^[:space:]]+)*[[:space:]]+commit([[:space:]]|$)' \
   || exit 0
 
-branch="$(git -C "${cwd:-.}" branch --show-current 2>/dev/null || true)"
+git_dir="$(git -C "${cwd:-.}" rev-parse --absolute-git-dir 2>/dev/null || true)"
+common_dir="$(git -C "${cwd:-.}" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
 
-case "$branch" in
-  main|master)
-    printf 'Blocked: commits on %q are not allowed.\n' "$branch" >&2
-    printf 'Create a worktree on a feature branch:\n' >&2
-    printf '  git worktree add .worktrees/<name> -b <name> origin/%s\n' "$branch" >&2
-    printf 'Then work there. Or set ALLOW_MAIN_COMMIT=1 to override.\n' >&2
-    exit 2
-    ;;
-esac
+[ -n "$git_dir" ] && [ "$git_dir" = "$common_dir" ] || exit 0
 
-exit 0
+printf 'Blocked: commits in the mainline checkout are not allowed.\n' >&2
+printf 'Create a feature branch in a worktree:\n' >&2
+printf '  git worktree add .worktrees/<name> -b <name> HEAD\n' >&2
+printf 'Then work there. Or set ALLOW_MAIN_COMMIT=1 to override.\n' >&2
+exit 2
