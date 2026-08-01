@@ -21,3 +21,14 @@ enabled = true
 [mcp_servers.aws-mcp]
 command = "uvx"
 args = ["mcp-proxy-for-aws@latest", "https://aws-mcp.us-east-1.api.aws/mcp", "--metadata", "INSTALL_SOURCE=aws-cli"]
+
+[mcp_servers.terraform-docs]
+command = "docker"
+args = ["run", "-i", "--rm", "hashicorp/terraform-mcp-server:latest"]
+
+[mcp_servers.terragrunt-docs]
+command = "uvx"
+args = ["--from", "mcpdoc", "--with", "mcp<2", "mcpdoc", "--urls", "Terragrunt:https://docs.terragrunt.com/llms.txt", "--transport", "stdio"]
+
+[mcp_servers.auth0-docs]
+url = "https://auth0.com/docs/mcp"

@@ -239,6 +239,7 @@ Configured language support:
 | Shell | `bashls` | shfmt | ShellCheck |
 | Python | BasedPyright | Ruff format | LSP |
 | JavaScript/TypeScript | `ts_ls`, ESLint | Prettierd/Prettier | ESLint LSP |
+| Terraform | `terraformls` | LSP fallback | LSP |
 | Rust | rust-analyzer | rustfmt/LSP | LSP |
 
 ### Git

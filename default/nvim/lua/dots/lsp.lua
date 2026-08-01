@@ -1,4 +1,4 @@
-local servers = { "lua_ls", "bashls", "basedpyright", "ts_ls", "eslint", "rust_analyzer", "vimls" }
+local servers = { "lua_ls", "bashls", "basedpyright", "ts_ls", "eslint", "terraformls", "rust_analyzer", "vimls" }
 
 require("mason").setup()
 require("mason-lspconfig").setup({
