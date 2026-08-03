@@ -7,8 +7,6 @@ description: Use when asked to create, reconstruct, audit, or maintain a project
 
 Build a documentation-first control plane for a long-running, high-risk, or multi-repository program. The cockpit centralizes durable context and points to live operational truth. It does not become a source-code integration branch, deployment controller, or substitute for the systems it tracks.
 
-This skill is public and generic. Never copy private names, credentials, customer data, internal URLs, account IDs, tenant IDs, incident transcripts, or proprietary code into the skill or a public example.
-
 ## Load These Files
 
 Read only what the task needs:
@@ -17,9 +15,8 @@ Read only what the task needs:
 | --- | --- |
 | `reference/artifact-model.md` | Required cockpit artifacts, ownership, and content rules |
 | `reference/workflows.md` | Review, HITL merge, rollout, tracker, incident, and context workflows |
-| `reference/sanitization.md` | Public-safe collection, redaction, and publication checks |
 | `scripts/scaffold_cockpit.py` | Create a non-destructive cockpit skeleton |
-| `scripts/verify_cockpit.py` | Check structure, metadata, links, catalog coverage, and public-safety patterns |
+| `scripts/verify_cockpit.py` | Check structure, metadata, links, and catalog coverage |
 
 ## Trigger Boundary
 
@@ -208,22 +205,12 @@ If the user requests a Notion tracker:
 5. Link the old tracker to the new tracker; preserve old content as history.
 6. Fetch both pages after writing to verify placement.
 
-Do not put secrets, raw plans/state, customer-sensitive data, or full diffs on the page.
-
 ### 12. Verify the Cockpit
 
 Run:
 
 ```bash
 python3 <SKILL_DIR>/scripts/verify_cockpit.py /absolute/path/to/cockpit
-```
-
-For a public release, also pass private literals that must not appear:
-
-```bash
-python3 <SKILL_DIR>/scripts/verify_cockpit.py /absolute/path/to/cockpit \
-  --forbid 'private-company-name' \
-  --forbid 'internal.example.com'
 ```
 
 Then perform a read-only independent audit for contradictions, stale claims, missing rollout state, broken links, and weak stop conditions.

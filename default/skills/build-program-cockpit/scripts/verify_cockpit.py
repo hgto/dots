@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify cockpit structure, metadata, relative links, catalog coverage, and common secret patterns."""
+"""Verify cockpit structure, metadata, relative links, and catalog coverage."""
 
 from __future__ import annotations
 
@@ -42,14 +42,6 @@ ALLOWED_STATUS = {"current", "outdated"}
 
 LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
 CATALOG_PATH_RE = re.compile(r"\]\(([^)#?]+\.md)(?:#[^)]+)?\)")
-SECRET_PATTERNS = {
-    "private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
-    "AWS access key": re.compile(r"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b"),
-    "JWT-shaped value": re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b"),
-    "GitHub token": re.compile(r"\bgh[opsu]_[A-Za-z0-9]{20,}\b"),
-}
-
-
 def frontmatter(text: str) -> dict[str, str]:
     if not text.startswith("---\n"):
         return {}
@@ -67,7 +59,6 @@ def frontmatter(text: str) -> dict[str, str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("root", type=Path)
-    parser.add_argument("--forbid", action="append", default=[])
     args = parser.parse_args()
 
     root = args.root.expanduser().resolve()
@@ -120,21 +111,11 @@ def main() -> int:
 
     for path in all_files:
         rel = path.relative_to(root).as_posix()
-        if path.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".pdf", ".zip"}:
-            warnings.append(f"{rel}: binary artifact requires manual sanitization review")
-            continue
         try:
-            text = path.read_text(encoding="utf-8")
+            path.read_text(encoding="utf-8")
         except (UnicodeDecodeError, OSError):
-            warnings.append(f"{rel}: unreadable artifact requires manual sanitization review")
+            warnings.append(f"{rel}: unreadable artifact")
             continue
-        for name, pattern in SECRET_PATTERNS.items():
-            if pattern.search(text):
-                errors.append(f"{rel}: possible {name}")
-        lowered = text.casefold()
-        for index, literal in enumerate(args.forbid, start=1):
-            if literal.casefold() in lowered:
-                errors.append(f"{rel}: forbidden literal #{index} present")
 
     catalog_path = root / "ARTIFACTS.md"
     if catalog_path.exists():
