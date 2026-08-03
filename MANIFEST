@@ -28,13 +28,10 @@ $ shell
 $ agentskills
 # one symlink per skill dir, so plugin-installed skills aren't clobbered.
 # opencode auto-loads ~/.claude/skills as an external skill root. Install for
-# both the legacy Codex-compatible root and the shared agent-skills root.
+# both Codex's native skill root and the shared agent-skills root.
 ~/.claude/skills/: ./default/skills/*
 ~/.codex/skills/: ./default/skills/*
 ~/.agents/skills/: ./default/skills/*
-~/.claude/skills/: ./skills/*
-~/.codex/skills/: ./skills/*
-~/.agents/skills/: ./skills/*
 
 $ vim
 ~/.vimrc: @delete
