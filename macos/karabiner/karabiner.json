@@ -23,9 +23,7 @@
                                     "key_code": "caps_lock",
                                     "modifiers": {
                                         "optional": [
-                                            "control",
-                                            "command",
-                                            "option"
+                                            "any"
                                         ]
                                     }
                                 },
@@ -37,10 +35,20 @@
                         ]
                     },
                     {
-                        "description": "windows keyboard on macos except in rdp",
+                        "description": "Logitech G915 TKL modifier layout on macOS except in RDP",
                         "manipulators": [
                             {
                                 "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "is_keyboard": true,
+                                                "product_id": 50501,
+                                                "vendor_id": 1133
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    },
                                     {
                                         "bundle_identifiers": [
                                             "^com\\.microsoft\\.rdc.*"
@@ -66,32 +74,18 @@
                             {
                                 "conditions": [
                                     {
-                                        "bundle_identifiers": [
-                                            "^com\\.microsoft\\.rdc"
+                                        "identifiers": [
+                                            {
+                                                "is_keyboard": true,
+                                                "product_id": 50501,
+                                                "vendor_id": 1133
+                                            }
                                         ],
-                                        "type": "frontmost_application_unless"
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "left_control",
-                                    "modifiers": {
-                                        "optional": [
-                                            "control",
-                                            "command",
-                                            "option"
-                                        ]
-                                    }
-                                },
-                                "to": {
-                                    "key_code": "left_command"
-                                },
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
+                                        "type": "device_if"
+                                    },
                                     {
                                         "bundle_identifiers": [
-                                            "^com\\.microsoft\\.rdc.*"
+                                            "^com\\.microsoft\\.rdc"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -113,6 +107,16 @@
                             },
                             {
                                 "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "is_keyboard": true,
+                                                "product_id": 50501,
+                                                "vendor_id": 1133
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    },
                                     {
                                         "bundle_identifiers": [
                                             "^com\\.microsoft\\.rdc.*"
@@ -137,6 +141,16 @@
                             },
                             {
                                 "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "is_keyboard": true,
+                                                "product_id": 50501,
+                                                "vendor_id": 1133
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    },
                                     {
                                         "bundle_identifiers": [
                                             "^com\\.microsoft\\.rdc.*"
@@ -164,6 +178,19 @@
                 ]
             },
             "devices": [
+                {
+                    "disable_built_in_keyboard_if_exists": false,
+                    "fn_function_keys": [],
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "is_pointing_device": false,
+                        "product_id": 50501,
+                        "vendor_id": 1133
+                    },
+                    "ignore": false,
+                    "manipulate_caps_lock_led": true,
+                    "simple_modifications": []
+                },
                 {
                     "disable_built_in_keyboard_if_exists": false,
                     "fn_function_keys": [],

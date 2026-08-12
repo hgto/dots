@@ -14,8 +14,6 @@ implementation plan.
 "Mainline" inhereinafter refers to the locally checked-out branch, not in a worktree, or
 any branch named like main, master, or mainline.
 
-Never run `git push` (or any variant) to a remote branch without approval from the user.
-
 ## Git: worktree workflow
 
 All work happens in worktrees, never directly on mainline. Keep mainline synced read-only:
