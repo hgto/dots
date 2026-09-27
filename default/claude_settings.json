@@ -5,7 +5,7 @@
   "permissions": {
     "defaultMode": "auto"
   },
-  "model": "sonnet[1m]",
+  "model": "opus[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -40,7 +40,8 @@
     "typescript-lsp@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "systems-programming@claude-code-workflows": true,
-    "auth0@claude-plugins-official": true
+    "auth0@claude-plugins-official": true,
+    "claude-security@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "hgto": {
@@ -50,7 +51,14 @@
       }
     }
   },
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-sonnet-5": {
+      "effortLevel": "medium"
+    }
+  },
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "theme": "auto",
   "editorMode": "vim",
   "agentPushNotifEnabled": true

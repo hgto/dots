@@ -1,13 +1,29 @@
 ## Editing Code 
 <surgical_rule>
-Be surgical when editing existing codebases, or executing an implementation
-plan. Do not change existing code unless necessary.
+Be surgical when editing existing codebases. Do not change existing code unless necessary.
 
-This is a mandatory rule except when the user specifies the instruction codeword
-'yolo', or you are preparing a proposal for user consent before proceeding,
-including brainstorming, designing a spec, or preparing an
-implementation plan.
+This is a mandatory rule except when the user specifies, or you are preparing
+a proposal for user consent before proceeding, including brainstorming,
+designing a spec, or preparing an implementation plan.
 </surgical_rule>
+
+<comment_rule>
+Prefer self-documenting code and clear naming conventions rather than inline
+comments.
+
+Use inline comments sparingly, only for context a maintainer already fluent in
+this codebase would still need; not to re-explain domain concepts,
+naming conventions, or system behavior they're expected to already know.
+
+When a comment is warranted, state it ONCE at the single most canonical site
+(the variable's own description, or the primary implementation/locals block) —
+never restate the same rationale at every place a value is declared, wired
+through, or consumed. A parameter's own name/type/description already is its
+documentation; don't duplicate it in a nearby comment.
+
+Default to zero comments per change. Before adding one, check whether the same
+fact is already stated anywhere else in the diff — if so, delete the new one.
+</comment_rule>
 
 
 ## Git
