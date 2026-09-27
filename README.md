@@ -5,8 +5,8 @@ Here be dragons. These are my dots.
 These dots are deployed with [toda](https://github.com/hgto/toda), my bespoke
 symlink manager that uses a bespoke file spec. Yes, I rolled my own.
 
-Looking for the keys? [KEYBINDS.md](KEYBINDS.md) is a one-page shortcut sheet for
-tmux, Neovim, Vim, OpenCode, Claude Code, and Codex.
+[KEYBINDS.md](KEYBINDS.md) is a one-page shortcut sheet for tmux, Neovim, Vim,
+OpenCode, Claude Code, and Codex.
 
 
 ## Quickstart, be lazy
