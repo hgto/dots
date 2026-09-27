@@ -54,6 +54,9 @@ $ mux
 ~/.tmux/plugins/tmux-fzf-url: ./vendor/tmux-fzf-url
 
 $ git
+# gitid.bin and gitid.prevHooksPath are machine-specific absolute paths
+# (gitid reads them raw, without ~ expansion). Set them in an untracked
+# ~/.config/git/local.gitconfig, pulled in by default/gitconfig's [include].
 ~/.gitignore: ./default/gitignore
 ~/.gitconfig: ./default/gitconfig
 ~/bin/gitid: ./vendor/gitid/gitid
