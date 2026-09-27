@@ -2,6 +2,8 @@ Host github.com github gh
 HostName github.com
 User git
 LogLevel FATAL
+IdentityFile ~/.ssh/hgto.pub
+IdentitiesOnly yes
 
 Host gitlab.com gitlab gl
 Hostname gitlab.com
