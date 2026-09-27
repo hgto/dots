@@ -33,11 +33,11 @@ if s:is_nvim
       let $PATH .= ":" . fnamemodify(s:node_path, ':p:h')
     endif
 
-    let s:pydir = fnamemodify('~/.virtualenvs/3/bin/', ':p')
-    if isdirectory(s:pydir)
-      let g:python3_host_prog = s:pydir . "python"
+    let s:python3 = exepath('python3')
+    if !empty(s:python3)
+      let g:python3_host_prog = s:python3
     else
-      echomsg "python3_host_prog unset - dir not found: " . s:pydir
+      echomsg "python3_host_prog unset - python3 not found in PATH"
     endif
   endif
 endif
