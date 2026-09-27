@@ -16,11 +16,53 @@
 #   2. For every hook: delegate to the repo-local hook of the same name, if one
 #      exists, so per-repo hooks (husky, pre-commit, etc.) keep working.
 #
+#   0. For every hook: before anything else, run an optional extra hook named
+#      by `gitguard.extraHooksPath` (e.g. a leak scanner kept outside this
+#      public repo). It runs in both dispatch modes, primary and chained
+#      behind another dispatcher, and a nonzero exit aborts the git operation.
+#
 # Each standard client hook name in this directory is a symlink to this script;
 # the hook being run is determined from the invoked name ($0).
 set -u
 
 hook=$(basename "$0")
+
+resolve_dir() {
+  # git expands a leading `~` in config values; plain `cd` does not. The quoted
+  # tildes below are match patterns for a literal `~`, not paths to expand.
+  # shellcheck disable=SC2088
+  case "$1" in
+    "~/"*) set -- "$HOME/${1#\~/}" ;;
+    "~")   set -- "$HOME" ;;
+  esac
+  # shellcheck disable=SC1007  # `CDPATH= cd` clears CDPATH for this command only
+  CDPATH= cd -- "$1" 2>/dev/null && pwd -P
+}
+
+# pre-push hooks read stdin (one line per ref being pushed). Buffer it once so
+# both the extra hook below and any repo-local pre-push hook (Job 2) can read
+# it in full, since a pipe can only be drained once.
+stdin_buf=""
+if [ "$hook" = "pre-push" ]; then
+  stdin_buf=$(mktemp) || stdin_buf=""
+  if [ -n "$stdin_buf" ]; then
+    cat > "$stdin_buf"
+    trap 'rm -f "$stdin_buf"' EXIT
+  fi
+fi
+
+# --- Job 0: run the optional extra hook from gitguard.extraHooksPath.
+extra_dir=$(resolve_dir "$(git config --get gitguard.extraHooksPath 2>/dev/null || true)" || true)
+extra_hook="$extra_dir/$hook"
+if [ -n "$extra_dir" ] && [ -x "$extra_hook" ]; then
+  if [ -n "$stdin_buf" ]; then
+    "$extra_hook" "$@" < "$stdin_buf"
+  else
+    "$extra_hook" "$@"
+  fi
+  extra_status=$?
+  [ "$extra_status" -eq 0 ] || exit "$extra_status"
+fi
 
 # --- Job 1: strip Claude/Anthropic co-author trailers from the commit message.
 if [ "$hook" = "commit-msg" ] && [ -n "${1:-}" ] && [ -f "$1" ]; then
@@ -46,18 +88,6 @@ fi
 # Testing core.hooksPath as well as prevHooksPath matters: a repo that points
 # core.hooksPath straight at us is using us as the primary dispatcher, and must
 # still get delegation even when a global prevHooksPath happens to name us.
-resolve_dir() {
-  # git expands a leading `~` in config values; plain `cd` does not. The quoted
-  # tildes below are match patterns for a literal `~`, not paths to expand.
-  # shellcheck disable=SC2088
-  case "$1" in
-    "~/"*) set -- "$HOME/${1#\~/}" ;;
-    "~")   set -- "$HOME" ;;
-  esac
-  # shellcheck disable=SC1007  # `CDPATH= cd` clears CDPATH for this command only
-  CDPATH= cd -- "$1" 2>/dev/null && pwd -P
-}
-
 self_dir=$(resolve_dir "$(dirname -- "$0")" || true)
 prev_dir=$(resolve_dir "$(git config --get gitid.prevHooksPath 2>/dev/null || true)" || true)
 this_dir=$(resolve_dir "$(git config --get core.hooksPath 2>/dev/null || true)" || true)
@@ -71,6 +101,10 @@ fi
 git_dir=$(git rev-parse --git-common-dir 2>/dev/null) || exit 0
 local_hook="$git_dir/hooks/$hook"
 if [ -x "$local_hook" ]; then
+  if [ -n "$stdin_buf" ]; then
+    "$local_hook" "$@" < "$stdin_buf"
+    exit $?
+  fi
   exec "$local_hook" "$@"
 fi
 

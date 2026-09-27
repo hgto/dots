@@ -135,5 +135,95 @@ git -C "$repo" config gitid.prevHooksPath "$HOOKS_DIR"
 : > "$repo/f"; git -C "$repo" add f
 check; if git -C "$repo" commit -q -m "WIP: nope" 2>/dev/null; then fail "primary: delegation wrongly skipped"; else ok "primary: still delegates when prevHooksPath names us"; fi
 
+# --- 8: gitguard.extraHooksPath hook blocks a commit ---
+sandbox
+repo="$(newrepo)"
+extra="$SANDBOX/extra"; mkdir -p "$extra"
+cat > "$extra/commit-msg" <<'HOOK'
+#!/usr/bin/env sh
+echo "blocked by extra hook" >&2
+exit 1
+HOOK
+chmod +x "$extra/commit-msg"
+git -C "$repo" config gitguard.extraHooksPath "$extra"
+: > "$repo/g"; git -C "$repo" add g
+check; if git -C "$repo" commit -q -m "should be blocked" 2>/dev/null; then fail "extra hook did not block commit"; else ok "extra hook blocks a commit"; fi
+
+# --- 9: gitguard.extraHooksPath hook passes, commit proceeds normally ---
+sandbox
+repo="$(newrepo)"
+extra="$SANDBOX/extra"; mkdir -p "$extra"
+cat > "$extra/commit-msg" <<'HOOK'
+#!/usr/bin/env sh
+exit 0
+HOOK
+chmod +x "$extra/commit-msg"
+git -C "$repo" config gitguard.extraHooksPath "$extra"
+: > "$repo/h"; git -C "$repo" add h
+check; if git -C "$repo" commit -q -m "fine" 2>/dev/null; then ok "extra hook passing lets commit through"; else fail "extra hook wrongly blocked a passing commit"; fi
+
+# --- 10: pre-push stdin reaches both the extra hook and the repo-local hook ---
+sandbox
+repo="$(newrepo)"
+: > "$repo/seed"; git -C "$repo" add seed; git -C "$repo" commit -q -m seed
+extra="$SANDBOX/extra"; mkdir -p "$extra"
+cat > "$extra/pre-push" <<EXTRA
+#!/usr/bin/env sh
+cat > "$SANDBOX/extra-stdin"
+exit 0
+EXTRA
+chmod +x "$extra/pre-push"
+mkdir -p "$repo/.git/hooks"
+cat > "$repo/.git/hooks/pre-push" <<LOCAL
+#!/usr/bin/env sh
+cat > "$SANDBOX/local-stdin"
+exit 0
+LOCAL
+chmod +x "$repo/.git/hooks/pre-push"
+git -C "$repo" config gitguard.extraHooksPath "$extra"
+(cd "$repo" && printf 'refs/heads/main %s refs/heads/main 0000000000000000000000000000000000000000\n' \
+  "$(git rev-parse HEAD)" | "$HOOKS_DIR/pre-push" origin "git@example.com:x/y.git")
+check; if [ -s "$SANDBOX/extra-stdin" ]; then ok "pre-push stdin reaches the extra hook"; else fail "extra hook got no stdin"; fi
+check; if [ -s "$SANDBOX/local-stdin" ]; then ok "pre-push stdin reaches the repo-local hook"; else fail "repo-local hook got no stdin"; fi
+check; if [ "$(cat "$SANDBOX/extra-stdin")" = "$(cat "$SANDBOX/local-stdin")" ]; then ok "both hooks see identical stdin"; else fail "stdin diverged between hooks"; fi
+
+# --- 11: no gitguard.extraHooksPath configured is a no-op ---
+sandbox
+repo="$(newrepo)"
+git -C "$repo" config --unset gitguard.extraHooksPath 2>/dev/null || true
+: > "$repo/i"; git -C "$repo" add i
+check; if git -C "$repo" commit -q -m "no extra path" 2>/dev/null; then ok "unset extraHooksPath is a no-op"; else fail "commit blocked with no extraHooksPath configured"; fi
+
+# --- 12: extra hook also runs when chained behind another dispatcher ---
+sandbox
+repo="$(newrepo)"
+extra="$SANDBOX/extra"; mkdir -p "$extra"
+cat > "$extra/commit-msg" <<'HOOK'
+#!/usr/bin/env sh
+echo "blocked by extra hook" >&2
+exit 1
+HOOK
+chmod +x "$extra/commit-msg"
+outer="$SANDBOX/outer"; mkdir -p "$outer"
+cat > "$outer/commit-msg" <<OUTER
+#!/usr/bin/env sh
+set -u
+hook=\$(basename "\$0")
+prev=\$(git config --get gitid.prevHooksPath 2>/dev/null || true)
+gitdir=\$(git rev-parse --absolute-git-dir 2>/dev/null || true)
+for dir in "\$prev" "\$gitdir/hooks"; do
+  [ -n "\$dir" ] || continue
+  [ -x "\$dir/\$hook" ] || continue
+  "\$dir/\$hook" "\$@" || exit \$?
+done
+exit 0
+OUTER
+chmod +x "$outer/commit-msg"
+git -C "$repo" config core.hooksPath "$outer"
+git -C "$repo" config gitid.prevHooksPath "$HOOKS_DIR"
+git -C "$repo" config gitguard.extraHooksPath "$extra"
+: > "$repo/j"; git -C "$repo" add j
+check; if git -C "$repo" commit -q -m "should be blocked chained" 2>/dev/null; then fail "chained: extra hook did not block commit"; else ok "chained: extra hook blocks a commit"; fi
+
 printf '\n%d tests, %d failures\n' "$_tests" "$_fails"
 [ "$_fails" -eq 0 ]
