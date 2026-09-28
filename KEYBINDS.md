@@ -9,14 +9,14 @@ reflect my configs in this repo, not upstream defaults.
 
 ## Leader keys at a glance
 
-| Tool           | Prefix / leader | Config                        |
-| -------------- | --------------- | ----------------------------- |
-| tmux           | `C-a`           | `default/tmux.conf`           |
-| Neovim         | `Space`         | `default/nvim/`               |
-| Vim            | `Space`         | `default/vimdir/`             |
-| OpenCode v2    | `C-x`           | `~/.config/opencode/cli.json` |
-| Claude Code    | —               | readline + modal vim          |
-| Codex          | —               | readline, optional vim        |
+| Tool           | Prefix / leader | Mode            | Config                        |
+| -------------- | --------------- | --------------- | ----------------------------- |
+| tmux           | `C-a`           | —               | `default/tmux.conf`           |
+| Neovim         | `Space`         | vi              | `default/nvim/`               |
+| Vim            | `Space`         | vi              | `default/vimdir/`             |
+| OpenCode v2    | `C-x`           | vi (plugin)     | `default/opencode_cli.json`   |
+| Claude Code    | —               | vi              | `default/claude_keybindings.json` |
+| Codex          | —               | vi              | `default/codex_config.toml`   |
 
 ---
 
@@ -162,59 +162,56 @@ local timestamp, `<leader>zt` UTC timestamp, `<leader>zd` UTC date, `<leader>zy`
 
 ## Coding agents
 
-OpenCode v2, Claude Code, and Codex side by side. All three share readline
-editing (`C-a/E/W/K/U/Y`, `Alt+B/F/D` for word motions); the differences are the
-product-level turns, modes, and tokens.
+OpenCode v2, Claude Code, and Codex, side by side. All three run **vi mode**, so
+the editing layer is identical and `Esc` leaves insert and does nothing else at
+the prompt. Every action that used to sit on `Esc` now sits on `C-c`.
 
-### Turns and input
+vi mode comes from Claude's `editorMode: vim`, Codex's `tui.vim_mode_default`,
+and the `@leohenon/opencode-vim-plugin` for OpenCode (installed with
+`opencode plugin add @leohenon/opencode-vim-plugin`).
 
-| Action                 | OpenCode v2       | Claude Code               | Codex     |
-| ---------------------- | ----------------- | ------------------------- | --------- |
-| Submit                 | `Enter`           | `Enter`                   | `Enter`   |
-| Newline                | `S-Enter`, `C-Enter`, or `C-j` | `\`+`Enter`, `S-Enter`, `C-J` | `C-J` |
-| Queue a follow-up      | `M-Enter`         | `C-Enter` (sends queued)  | `Tab`     |
-| Send queued now        | —                 | `C-Enter`                 | —         |
-| Interrupt              | `Esc`             | `Esc`                     | `Esc`     |
-| Edit previous / rewind | —                 | `Esc` `Esc`               | `Esc` `Esc` |
-| Clear input            | `C-c`             | `C-c`                     | `C-c`     |
-| Exit                   | `C-c` / `C-d`     | `C-d`                     | `C-c`     |
+### Shared core
 
-### View and history
+The same key in all three.
 
-| Action                  | OpenCode v2   | Claude Code | Codex   |
-| ----------------------- | ------------- | ----------- | ------- |
-| Reverse-search history  | —             | `C-r`       | `C-r`   |
-| Open recent sessions    | `C-o`         | —           | `/resume` |
-| External editor         | `<leader>e`   | `C-g`       | `C-g`   |
-| Transcript / detail view| —             | `C-o`       | `C-t`   |
-| Copy last output        | `<leader>y`   | —           | `C-o`   |
-| Redraw screen           | —             | `C-l`       | `C-l`   |
-| Stash / background      | —             | `C-s` / `C-b` | —     |
+| Action                 | Key         |
+| ---------------------- | ----------- |
+| Submit                 | `Enter`     |
+| Newline                | `S-Enter`   |
+| Leave insert → normal  | `Esc`       |
+| Interrupt turn         | `C-c`       |
+| Exit                   | `C-d`       |
+| External editor        | `C-g`       |
+| Reverse-search history | `C-r`       |
 
-### Models, modes, context
+### Where they still differ
 
-| Action                  | OpenCode v2        | Claude Code      | Codex            |
-| ----------------------- | ------------------ | ---------------- | ---------------- |
-| Switch model            | `<leader>m` (`F2`) | `Option+P`       | `/model`         |
-| Reasoning effort        | `C-t` (variants)   | `Option+T`       | `Alt+.` / `Alt+,` |
-| Permission / approval   | —                  | `S-Tab`          | `S-Tab`          |
-| Agents / plan mode      | `<leader>a`        | `/plan`          | `/plan`          |
-| Compact context         | `<leader>c`        | `/compact`       | `/compact`       |
-| New session             | `<leader>n`        | `/clear`         | `/new`           |
-| Resume session          | `<leader>l`        | `/resume`        | `/resume`        |
-| Toggle theme            | `<leader>t`        | `/theme`         | —                |
-| Undo / redo message     | `<leader>u` / `r`  | —                | —                |
+The action sets and key grammar differ — Codex takes single keys only, so no
+chords — and these stay per-tool.
 
-### Tokens and commands
+| Action                | OpenCode v2        | Claude Code          | Codex             |
+| --------------------- | ------------------ | -------------------- | ----------------- |
+| Queue a follow-up     | `M-Enter`          | `C-Enter`            | `Tab`             |
+| Switch model          | `<leader>m` (`F2`) | `Option+P`           | `/model`          |
+| Permission / approval | —                  | `S-Tab`              | `S-Tab`           |
+| Compact context       | `<leader>c`        | `/compact`           | `/compact`        |
+| New / resume session  | `<leader>n` / `l`  | `/clear` / `/resume` | `/new` / `/resume`|
+| Panel / transcript    | —                  | `C-o`                | `C-t`             |
+| Toggle vim mode       | `/vim`             | `/config`            | `/vim`            |
 
-| Action            | OpenCode v2 | Claude Code      | Codex   |
-| ----------------- | ----------- | ---------------- | ------- |
-| File mention      | `@`         | `@`              | `@`     |
-| Shell command     | —           | `!`              | `!`     |
-| Command / skill   | `/`         | `/`              | `/`     |
-| Emoji shortcode   | —           | `:`              | —       |
-| Vim mode          | —           | `editorMode: vim`| `/vim`  |
-| Help              | `C-p`       | `?` on empty     | `/keymap` |
+Two things still touch `Esc`: double-`Esc` rewinds to edit an earlier message
+in Claude Code and Codex (not exposed for remapping), and dialogs keep `Esc` to
+close. At the prompt, `Esc` is only for leaving insert.
+
+### Prompts and tokens
+
+| Action          | OpenCode v2 | Claude Code  | Codex     |
+| --------------- | ----------- | ------------ | --------- |
+| File mention    | `@`         | `@`          | `@`       |
+| Shell command   | —           | `!`          | `!`       |
+| Command / skill | `/`         | `/`          | `/`       |
+| Emoji shortcode | —           | `:`          | —         |
+| Help            | `C-p`       | `?` on empty | `/keymap` |
 
 **OpenCode diff viewer.** Open with `/diff`, then `d` chooses the scope (All,
 Committed, Uncommitted, Last turn, Base), `n`/`p` move between files, `v`
@@ -224,14 +221,14 @@ toggles split/unified, and `m` marks a file reviewed.
 switch tabs; `C-x 1`–`C-x 0` jump directly. Paste with `C-v`, attach images with
 `<leader>i`.
 
-**Claude Code vim mode.** `editorMode: vim` is on, so `Esc` enters NORMAL, with
-`i/a/o`, motions `h j k l w e b 0 $ gg G`, edits `x r dd D dw cc C yy p u .`,
-and text objects `iw/aw`, `i"/a"`, `i(/a(`. Remap a two-key INSERT sequence to
-`Esc` with `vimInsertModeRemaps`.
+**Claude Code vim mode.** `editorMode: vim`; `Esc` enters NORMAL, with `i/a/o`,
+motions `h j k l w e b 0 $ gg G`, edits `x r dd D dw cc C yy p u .`, and text
+objects `iw/aw`, `i"/a"`, `i(/a(`. Remap a two-key INSERT sequence to `Esc` with
+`vimInsertModeRemaps`.
 
-**Codex vim mode.** `/vim` or `toggle_vim_mode`. Standard modal editing in the
-composer: `i/a/A/I/o/O`, motions `h j k l w b e 0 $`, operators `d`/`y`/`c` with
-`dd`/`yy`, plus `x`, `s`, `p`, `u`.
+**Codex vim mode.** `tui.vim_mode_default = true` (or `/vim`). Modal editing in
+the composer: `i/a/A/I/o/O`, motions `h j k l w b e 0 $`, operators `d`/`y`/`c`
+with `dd`/`yy`, plus `x`, `s`, `p`, `u`.
 
 > In tmux, OpenCode's `C-Tab` and `C-1` don't reach the app; `M-Up`/`M-Down` and
 > the `C-x` chords do.
