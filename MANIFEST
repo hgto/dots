@@ -19,8 +19,10 @@ $ shell
 ~/.config/badssl.cnf: ./default/badssl.cnf
 ~/.config/ghostty/config.ghostty: ./default/ghostty.config
 ~/.claude/settings.json: ./default/claude_settings.json
+~/.claude/keybindings.json: ./default/claude_keybindings.json
 ~/.claude/CLAUDE.md: ./default/GLOBAL_AGENTS.md
 ~/.config/opencode/AGENTS.md: ./default/GLOBAL_AGENTS.md
+~/.config/opencode/cli.json: ./default/opencode_cli.json
 ~/.codex/AGENTS.md: ./default/GLOBAL_AGENTS.md
 ~/.codex/config.toml: ./default/codex_config.toml
 ~/.codex/hooks.json: ./default/codex_hooks.json

@@ -47,3 +47,9 @@ args = ["--from", "mcpdoc", "--with", "mcp<2", "mcpdoc", "--urls", "Terragrunt:h
 
 [mcp_servers.auth0-docs]
 url = "https://auth0.com/docs/mcp"
+
+[tui]
+vim_mode_default = true
+
+[tui.keymap.chat]
+interrupt_turn = ["ctrl-c"]

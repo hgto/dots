@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/v2/cli.json",
+  "tabs": {
+    "layout": "vertical"
+  },
+  "session": {
+    "sidebar": "hide"
+  },
+  "keybinds": {
+    "session.interrupt": "ctrl+c",
+    "prompt.clear": "alt+c",
+    "prompt.editor": "ctrl+g",
+    "session.first": "home,alt+home"
+  }
+}
