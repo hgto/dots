@@ -61,6 +61,8 @@ $ git
 ~/.gitconfig: ./default/gitconfig
 ~/bin/gitid: ./vendor/gitid/gitid
 ~/.config/bash/gitid-completion.bash: ./vendor/gitid/completion/gitid.bash
+~/.config/git/hgto.gitconfig: ./hgto.gitconfig
+~/.config/git/org.gitconfig: ./org.gitconfig
 
 $ ssh
 ~/bin/: ./ssh/bin/*
