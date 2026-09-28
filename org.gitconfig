@@ -1,0 +1,5 @@
+; vim: ft=gitconfig tw=0 ts=2 sw=2 sts=2 et:
+[includeIf "hasconfig:remote.*.url:*github.com[:/]hgto/**"]
+  path = ~/.config/git/hgto.gitconfig
+[includeIf "hasconfig:remote.*.url:github:hgto/**"]
+  path = ~/.config/git/hgto.gitconfig

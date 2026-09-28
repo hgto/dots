@@ -1,0 +1,8 @@
+; vim: ft=gitconfig tw=0 ts=2 sw=2 sts=2 et:
+[user]
+  name              = hgto
+  email             = 77352283+hgto@users.noreply.github.com
+  signingkey        =
+
+[github]
+  user = hgto
