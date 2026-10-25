@@ -1,3 +1,17 @@
+## Secrets
+<secrets_rule>
+Never write plaintext secrets to disk, including `.env` files, configuration,
+source code, documentation, logs, caches, temporary files, or generated artifacts.
+Store secrets only in 1Password or another user-approved secret manager. Files may
+contain secret references (such as `op://...`), never resolved secret values.
+
+Retrieve secrets at runtime into memory or a process-scoped environment; never
+persist them in shell profiles or environment files. Do not expose secrets in
+command-line arguments, shell history, tool output, or chat. Transfer secrets to
+the secret manager through stdin or an in-memory API, not plaintext staging files.
+Verify the stored value before removing an existing plaintext copy.
+</secrets_rule>
+
 ## Editing Code 
 <surgical_rule>
 Be surgical when editing existing codebases. Do not change existing code unless necessary.
