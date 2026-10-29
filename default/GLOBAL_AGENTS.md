@@ -21,6 +21,11 @@ a proposal for user consent before proceeding, including brainstorming,
 designing a spec, or preparing an implementation plan.
 </surgical_rule>
 
+<code_conventions_rule>
+Mandatory: When repository documentation conflicts with existing code conventions,
+follow the code conventions. List each material inconsistency in your final reply.
+</code_conventions_rule>
+
 <comment_rule>
 Prefer self-documenting code and clear naming conventions rather than inline
 comments.
