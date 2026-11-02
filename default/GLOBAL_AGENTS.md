@@ -5,6 +5,16 @@ source code, documentation, logs, caches, temporary files, or generated artifact
 Store secrets only in 1Password or another user-approved secret manager. Files may
 contain secret references (such as `op://...`), never resolved secret values.
 
+Use only the official 1Password MCP server for 1Password credential access.
+Read its getting-started and environments-guide resources and authenticate before
+using Environment tools. This applies to direct access and to access inside
+helpers, launchers, and other MCP servers: never invoke the `op` CLI to retrieve
+credentials, even as a fallback. Verify the available MCP capabilities; do not
+invent vault-item or secret-value read tools. If an MCP-backed credential path
+is unavailable, stop and report the blocker rather than asking for pasted or
+exported secrets. An MCP-managed Environment mount may be consumed in-process
+only after verifying it is a FIFO, never a regular plaintext file.
+
 Retrieve secrets at runtime into memory or a process-scoped environment; never
 persist them in shell profiles or environment files. Do not expose secrets in
 command-line arguments, shell history, tool output, or chat. Transfer secrets to
