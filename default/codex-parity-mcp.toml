@@ -1,0 +1,47 @@
+mcp_oauth_credentials_store = "keyring"
+
+[mcp_servers."1password"]
+command = "/Applications/1Password.app/Contents/MacOS/1password-mcp"
+startup_timeout_sec = 30
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["--yes", "@playwright/mcp@0.0.84", "--headless", "--isolated"]
+startup_timeout_sec = 45
+
+[mcp_servers.chrome-devtools]
+command = "npx"
+args = ["--yes", "chrome-devtools-mcp@1.11.0", "--isolated", "--no-usage-statistics"]
+startup_timeout_sec = 45
+
+[mcp_servers.terraform]
+command = "docker"
+args = ["run", "-i", "--rm", "hashicorp/terraform-mcp-server:0.4.0"]
+startup_timeout_sec = 45
+
+[mcp_servers.aws-documentation]
+command = "uvx"
+args = ["awslabs.aws-documentation-mcp-server@1.2.4"]
+startup_timeout_sec = 45
+
+[mcp_servers.auth0-docs]
+url = "https://auth0.com/docs/mcp"
+startup_timeout_sec = 30
+
+[mcp_servers.traversal]
+url = "https://api.prod.traversal.com/mcp/"
+http_headers_helper = "python3 /Users/thug/.agents/skills/traversal-mcp-connect/headers-helper.py"
+enabled = false
+startup_timeout_sec = 30
+
+[mcp_servers.github]
+url = "https://api.githubcopilot.com/mcp/"
+enabled = false
+
+[mcp_servers.linear-server]
+url = "https://mcp.linear.app/mcp"
+enabled = true
+
+[mcp_servers.wiz]
+url = "https://mcp.app.wiz.io/"
+enabled = false
