@@ -1,0 +1,252 @@
+[
+  {
+    "name": "amazon-bedrock",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/amazon-bedrock",
+    "category": "aws"
+  },
+  {
+    "name": "aws-billing-and-cost-management",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-billing-and-cost-management",
+    "category": "aws"
+  },
+  {
+    "name": "aws-blocks",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-blocks",
+    "category": "aws"
+  },
+  {
+    "name": "aws-cdk",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-cdk",
+    "category": "aws"
+  },
+  {
+    "name": "aws-cloudformation",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-cloudformation",
+    "category": "aws"
+  },
+  {
+    "name": "aws-compute",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-compute",
+    "category": "aws"
+  },
+  {
+    "name": "aws-containers",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-containers",
+    "category": "aws"
+  },
+  {
+    "name": "aws-database",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-database",
+    "category": "aws"
+  },
+  {
+    "name": "aws-deployment",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-deployment",
+    "category": "aws"
+  },
+  {
+    "name": "aws-iam",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-iam",
+    "category": "aws"
+  },
+  {
+    "name": "aws-messaging-and-streaming",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-messaging-and-streaming",
+    "category": "aws"
+  },
+  {
+    "name": "aws-observability",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-observability",
+    "category": "aws"
+  },
+  {
+    "name": "aws-sdk-js-v3-usage",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-sdk-js-v3-usage",
+    "category": "aws"
+  },
+  {
+    "name": "aws-sdk-python-usage",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-sdk-python-usage",
+    "category": "aws"
+  },
+  {
+    "name": "aws-sdk-swift-usage",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-sdk-swift-usage",
+    "category": "aws"
+  },
+  {
+    "name": "aws-secrets-manager",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-secrets-manager",
+    "category": "aws"
+  },
+  {
+    "name": "aws-serverless",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/aws-serverless",
+    "category": "aws"
+  },
+  {
+    "name": "launch-with-aws",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/launch-with-aws",
+    "category": "aws"
+  },
+  {
+    "name": "signing-in-to-aws",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/aws-core/1.1.0/skills/signing-in-to-aws",
+    "category": "aws"
+  },
+  {
+    "name": "security-language",
+    "source": "/Users/thug/Projects/security-skills/skills/security-language",
+    "category": "security"
+  },
+  {
+    "name": "security-review",
+    "source": "/Users/thug/Projects/security-skills/skills/security-review",
+    "category": "security"
+  },
+  {
+    "name": "security-review-pr",
+    "source": "/Users/thug/Projects/security-skills/skills/security-review-pr",
+    "category": "security"
+  },
+  {
+    "name": "settle",
+    "source": "/Users/thug/Projects/security-skills/skills/settle",
+    "category": "security"
+  },
+  {
+    "name": "settle-comments-and-docs",
+    "source": "/Users/thug/Projects/security-skills/skills/settle-comments-and-docs",
+    "category": "security"
+  },
+  {
+    "name": "settle-draft-pr",
+    "source": "/Users/thug/Projects/security-skills/skills/settle-draft-pr",
+    "category": "security"
+  },
+  {
+    "name": "settle-security",
+    "source": "/Users/thug/Projects/security-skills/skills/settle-security",
+    "category": "security"
+  },
+  {
+    "name": "verify-security-language",
+    "source": "/Users/thug/Projects/security-skills/skills/verify-security-language",
+    "category": "security"
+  },
+  {
+    "name": "write-security-executive-summary",
+    "source": "/Users/thug/Projects/security-skills/skills/write-security-executive-summary",
+    "category": "security"
+  },
+  {
+    "name": "write-security-finding",
+    "source": "/Users/thug/Projects/security-skills/skills/write-security-finding",
+    "category": "security"
+  },
+  {
+    "name": "write-security-incident-report",
+    "source": "/Users/thug/Projects/security-skills/skills/write-security-incident-report",
+    "category": "security"
+  },
+  {
+    "name": "go-concurrency-patterns",
+    "source": "/Users/thug/.claude/plugins/cache/claude-code-workflows/systems-programming/1.2.3/skills/go-concurrency-patterns",
+    "category": "systems-programming"
+  },
+  {
+    "name": "memory-safety-patterns",
+    "source": "/Users/thug/.claude/plugins/cache/claude-code-workflows/systems-programming/1.2.3/skills/memory-safety-patterns",
+    "category": "systems-programming"
+  },
+  {
+    "name": "rust-async-patterns",
+    "source": "/Users/thug/.claude/plugins/cache/claude-code-workflows/systems-programming/1.2.3/skills/rust-async-patterns",
+    "category": "systems-programming"
+  },
+  {
+    "name": "frontend-design",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/frontend-design/1.1.1/skills/frontend-design",
+    "category": "frontend-design"
+  },
+  {
+    "name": "auth0",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/auth0/2.6.0/skills/auth0",
+    "category": "auth0"
+  },
+  {
+    "name": "a11y-debugging",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/chrome-devtools-mcp/1.11.0/skills/a11y-debugging",
+    "category": "chrome-devtools"
+  },
+  {
+    "name": "chrome-devtools",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/chrome-devtools-mcp/1.11.0/skills/chrome-devtools",
+    "category": "chrome-devtools"
+  },
+  {
+    "name": "chrome-devtools-cli",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/chrome-devtools-mcp/1.11.0/skills/chrome-devtools-cli",
+    "category": "chrome-devtools"
+  },
+  {
+    "name": "cookie-debugging",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/chrome-devtools-mcp/1.11.0/skills/cookie-debugging",
+    "category": "chrome-devtools"
+  },
+  {
+    "name": "debug-optimize-lcp",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/chrome-devtools-mcp/1.11.0/skills/debug-optimize-lcp",
+    "category": "chrome-devtools"
+  },
+  {
+    "name": "memory-leak-debugging",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/chrome-devtools-mcp/1.11.0/skills/memory-leak-debugging",
+    "category": "chrome-devtools"
+  },
+  {
+    "name": "troubleshooting",
+    "source": "/Users/thug/.claude/plugins/cache/claude-plugins-official/chrome-devtools-mcp/1.11.0/skills/troubleshooting",
+    "category": "chrome-devtools"
+  },
+  {
+    "name": "doc-coauthoring",
+    "source": "/Users/thug/.config/opencode/skills/doc-coauthoring",
+    "category": "opencode"
+  },
+  {
+    "name": "rust-skills",
+    "source": "/Users/thug/.config/opencode/skills/rust-skills",
+    "category": "opencode"
+  },
+  {
+    "name": "pr-review-request",
+    "source": "/Users/thug/.claude/skills/pr-review-request",
+    "category": "personal"
+  },
+  {
+    "name": "writing-rfcs",
+    "source": "/Users/thug/.claude/skills/writing-rfcs",
+    "category": "personal"
+  },
+  {
+    "name": "worktrees",
+    "source": "/Users/thug/.claude/skills/worktrees",
+    "category": "adapted-personal"
+  },
+  {
+    "name": "code-review",
+    "source": null,
+    "category": "codex-adapter"
+  },
+  {
+    "name": "language-tooling",
+    "source": null,
+    "category": "codex-adapter"
+  },
+  {
+    "name": "traversal-mcp-connect",
+    "source": null,
+    "category": "adapted-personal"
+  }
+]
