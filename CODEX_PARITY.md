@@ -1,8 +1,8 @@
 # Codex skill and plugin parity
 
 Implemented locally on November 4, 2026. Global skills and the verified MCP
-connections are installed. Repository discovery changes are committed in task
-worktrees and have not been merged or pushed.
+connections are installed. Repository discovery changes are merged into local
+mainline checkouts. Nothing has been pushed.
 
 ## Installed
 
@@ -79,8 +79,8 @@ repository scope and the existing canonical skill content.
 | db-migrations | 5 | `db-migrations/.worktrees/codex-skill-parity` | `c14a1b7` |
 | traversal-demo-docker | 3 | `traversal-demo-docker/.worktrees/codex-skill-parity` | `f8544f0` |
 
-These changes are available when working in those task worktrees. They will
-apply to the usual checkouts after their normal merge process. Traversal already
+These changes are available in the usual mainline checkouts after the local
+merges. Task worktrees were removed after verification. Traversal already
 has matching Claude and shared skill roots and needed no change. The initial
 audit counted four db-migrations skills; fetching the current mainline found five.
 
@@ -135,10 +135,9 @@ were excluded; its skill, rule references, checks, and license are retained.
 
 ## Persistence and rollback
 
-Active shared-skill symlinks point into the dotfiles task worktree at
-`/Users/thug/Projects/the_product/.worktrees/codex-parity-dots`.
-Keep it until the changes are merged and links are repointed to the permanent
-checkout. Removing it now would break the newly installed skills.
+Active shared-skill symlinks point into the permanent dotfiles checkout at
+`/Users/thug/Projects/dots/default/skills`. The original task worktree was removed
+after merging and verifying all installed links.
 
 `~/.agents/codex-parity-install.json` records installed links, original skill
 backup locations, added MCP entries, and the previous OAuth-store setting.
@@ -148,6 +147,6 @@ The 16 preserved AWS directories are under
 To roll back, remove only skill symlinks that still match the manifest, then
 restore their recorded backup directories. Remove only the ten added MCP
 tables and restore the prior OAuth-store setting if appropriate; preserve
-unrelated configuration and do not export Keychain credentials. Unmerged
-repository commits can simply remain unmerged. Restart Codex to reload MCP
+unrelated configuration and do not export Keychain credentials. Repository
+discovery changes can be reverted through the normal worktree workflow. Restart Codex to reload MCP
 servers; skills are available on the next turn.
