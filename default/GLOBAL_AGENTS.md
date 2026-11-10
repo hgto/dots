@@ -54,6 +54,12 @@ Default to zero comments per change. Before adding one, check whether the same
 fact is already stated anywhere else in the diff — if so, delete the new one.
 </comment_rule>
 
+<test_rule>
+Never write tests that assert on source text (substring/regex over file
+contents). Assert on behavior or parsed structure, e.g. `terraform test` with
+`jsondecode` on rendered policies.
+</test_rule>
+
 
 ## Git
 "Mainline" inhereinafter refers to the locally checked-out branch, not in a worktree, or
@@ -94,6 +100,11 @@ read `SSH_AUTH_SOCK`. Keys live in the 1Password ssh-agent, selected by
 `IdentityAgent` in `~/.ssh/config`, which overrides `SSH_AUTH_SOCK`. Because
 `ssh-add` only ever talks to `SSH_AUTH_SOCK`, `ssh-add -l` exits non-zero while
 `git fetch` succeeds. That is a false negative, not a signal.
+
+SSH will not work while the macOS user session is locked, because the SSH key
+is held by 1Password. Ask the user to unlock their macOS session and approve any
+1Password prompt, then retry. Do not treat this as a missing key or switch
+authentication methods.
 
 Run the git command you need and let its exit status answer the question. To
 confirm access before planning around it: `git ls-remote <remote> HEAD`.

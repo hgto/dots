@@ -11,6 +11,7 @@ alias \
   tmxlb='tmux loadb -' \
   cdtl='cd "$(git rev-parse --show-toplevel)"' \
   cc='claude' \
+  ccdsp='claude --dangerously-skip-permissions' \
   cx='codex' \
   oc='opencode' \
   ocr='opencode-resume' \
